@@ -1,6 +1,8 @@
-# money-management
+# money-management-itu-2023
 
-## Project setup
+## You should have npm and node installed !!!
+
+## Vue.js project setup
 ```
 npm install
 ```
@@ -20,5 +22,7 @@ npm run build
 npm run lint
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+# Node.js server setup
+```
+node server.js
+```
