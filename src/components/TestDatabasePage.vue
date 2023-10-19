@@ -23,6 +23,7 @@
         <table class="table" style="border: 1px;">
             <thead>
                 <tr>
+                    <th scope="col">Id</th>
                     <th scope="col">Username</th>
                     <th scope="col">E-mail</th>
                     <th scope="col">Password</th>
@@ -31,6 +32,7 @@
             <tbody>
                 <tr v-for="user in users" :key="user.id">
                     <td>{{ user.id }}</td>
+                    <td>{{ user.username }}</td>
                     <td>{{ user.email }}</td>
                     <td>{{ user.password }}</td>
                 </tr>
