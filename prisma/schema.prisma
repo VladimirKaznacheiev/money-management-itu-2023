@@ -17,3 +17,12 @@ model User {
   email String  @unique
   password String
 }
+
+
+model Transaction {
+  id    Int     @id @default(autoincrement())
+  category String
+  description String?
+  date Date 
+  amount Int     
+}
