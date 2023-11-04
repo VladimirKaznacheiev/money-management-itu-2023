@@ -1,43 +1,65 @@
 <template>
     <div class="container">
         <div>
-            <h1>Test Database Page</h1>
+            <h1>FinanSync</h1>
             <p>
-                This page is used to test the database connection.
+                Kostra
             </p>
         </div>
-        <div class="form-group">
-            <div class="input-group my-3">
-                <input type="text" class="form-control" v-model="input_user_username" placeholder="Input username" />
+
+        <button type="button" class="btn btn-primary" @click="show_add_transaction_modal = !show_add_transaction_modal" >Add transaction +</button>
+
+        <Modal name="m1" v-model:visible="show_add_transaction_modal" :maskClosable="false" :closable="false" :cancelButton="{text: 'cancel', onclick: () => {show_add_transaction_modal = !show_add_transaction_modal}, loading: false}" :okButton="{text: 'Add transaction +', onclick: () => {add_transaction();}, loading: false}">
+            <div>
+                 <div class="form-group">
+                    <div class="input-group my-3">
+                        <input type="text" class="form-control" v-model="transaction_category" placeholder="Input category" />
+                    </div>
+                    <div class="input-group my-3">
+                        <input type="text" class="form-control" v-model="transaction_description" placeholder="Input description" />
+                    </div>
+                    <div class="input-group my-3">
+                        <input type="date" class="form-control" v-model="transaction_date" placeholder="Transaction date" />
+                    </div>
+                    <div class="input-group my-3">
+                        <input type="number" class="form-control" v-model="transaction_amount" placeholder="Input amount $" />
+                    </div>
+                </div>
+
             </div>
-            <div class="input-group my-3">
-                <input type="email" class="form-control" v-model="input_user_email" placeholder="Input e-mail" />
-            </div>
-            <div class="input-group my-3">
-                <input type="password" class="form-control" v-model="input_user_password" placeholder="Input password" />
-            </div>
-            <div class="input-group my-3">
-                <button type="button" class="btn btn-primary" @click="save_user_to_db" >Create user</button>
+        </Modal>   
+
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <table class="table" style="border: 1px;">
+                        <thead>
+                            <tr>
+                                <th scope="col">Id</th>
+                                <th scope="col">Category</th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="transaction in transactions" :key="transaction.id">
+                                <td>{{ transaction.id }}</td>
+                                <td>{{ transaction.category }}</td>
+                                <td>{{ transaction.description }}</td>
+                                <td>{{ transaction.date }}</td>
+                                <td>{{ transaction.amount }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col">
+                    <Pie :data="pie_data" :options="pie_options"/>
+
+                </div>
             </div>
         </div>
-        <table class="table" style="border: 1px;">
-            <thead>
-                <tr>
-                    <th scope="col">Id</th>
-                    <th scope="col">Username</th>
-                    <th scope="col">E-mail</th>
-                    <th scope="col">Password</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="user in users" :key="user.id">
-                    <td>{{ user.id }}</td>
-                    <td>{{ user.username }}</td>
-                    <td>{{ user.email }}</td>
-                    <td>{{ user.password }}</td>
-                </tr>
-            </tbody>
-        </table>
+
     </div>
 </template>
 
@@ -46,34 +68,73 @@ import axios from 'axios';
 
 import { ref } from 'vue'
 
+import { Modal } from 'usemodal-vue3';
 
-const input_user_username = ref('');
-const input_user_email = ref('');
-const input_user_password = ref('');
-const users = ref([]);
+import { Pie } from 'vue-chartjs'
 
-function save_user_to_db() {
-    axios.post('http://localhost:3000/add_user', null, {params  : { 
-        username: input_user_username.value,
-        email: input_user_email.value,
-        password: input_user_password.value
+
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
+ChartJS.register(ArcElement, Tooltip, Legend)
+
+const transaction_category = ref('');
+const transaction_description = ref('');
+const transaction_date = ref(new Date().toISOString().slice(0,10));
+const transaction_amount = ref('');
+const transactions = ref([]);
+const show_add_transaction_modal = ref(false);
+const pie_data = ref({
+  "labels": [],
+  "datasets": [
+    {
+      "backgroundColor": [],
+      "data": []
+    }
+  ]
+});
+
+const pie_options = ref({
+    responsive: true,
+});
+
+
+
+function add_transaction() {
+    show_add_transaction_modal.value = !show_add_transaction_modal.value;
+    save_transaction_to_db();
+}
+
+function save_transaction_to_db() {
+    axios.post('http://localhost:3000/add_transaction', null, {params  : { 
+        category: transaction_category.value,
+        description: transaction_description.value, 
+        date: transaction_date.value,
+        amount: transaction_amount.value
     }})
     .then(response => {
-        get_users_data();
+        get_transactions_data();
+        get_transactions_piechar_data();
     });
 }
 
-function get_users_data() {
-    axios.get('http://localhost:3000/get_users')
+function get_transactions_data() {
+    
+    axios.get('http://localhost:3000/get_transactions')
         .then(response => {
             console.log(response)
-            users.value = response.data
+            transactions.value = response.data
         });
 }
+function get_transactions_piechar_data() {
+    axios.get('http://localhost:3000/get_transactions_piechart_data').then(response => {
+        console.log(response.data)
+        pie_data.value = response.data;
+    });
+}
 
-get_users_data();
 
-    
 
+
+get_transactions_data();
+get_transactions_piechar_data();
 
 </script>
