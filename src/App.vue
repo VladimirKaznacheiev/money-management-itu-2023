@@ -1,5 +1,5 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
+  <img style="width: 300px; height: 300px;" alt="Vue logo" src="./assets/money.png">
   <TestDatabasePage />
 </template>
 
