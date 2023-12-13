@@ -1,10 +1,7 @@
 <template>
     <div class="container">
         <div>
-            <h1>FinanSync</h1>
-            <p>
-                Kostra
-            </p>
+            <h1>Dashboard</h1>
         </div>
 
         <button type="button" class="btn btn-primary" @click="show_add_transaction_modal = !show_add_transaction_modal" >Add transaction +</button>

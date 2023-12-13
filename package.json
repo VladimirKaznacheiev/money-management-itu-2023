@@ -3,11 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
+    "serve": "vue-cli-service serve --host localhost",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.36",
+    "@fortawesome/free-brands-svg-icons": "^5.15.4",
+    "@fortawesome/free-regular-svg-icons": "^5.15.4",
+    "@fortawesome/free-solid-svg-icons": "^5.15.4",
+    "@fortawesome/vue-fontawesome": "^3.0.5",
     "@prisma/client": "^5.4.2",
     "apexcharts": "^3.44.0",
     "axios": "^1.5.1",
@@ -20,8 +25,10 @@
     "prisma": "^5.4.2",
     "sqlite3": "^5.1.6",
     "usemodal-vue3": "^0.3.7",
-    "vue": "^3.3.4",
-    "vue-chartjs": "^5.2.0"
+    "vue": "^3.3.11",
+    "vue-chartjs": "^5.2.0",
+    "vue-material-design-icons": "^5.2.0",
+    "vue-sidebar-menu": "^5.2.12"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
