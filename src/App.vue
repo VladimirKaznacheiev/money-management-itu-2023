@@ -4,9 +4,9 @@
 
     <div class="row" style="height: 100vh;">
      
-      <div class="col-2 " style="background-color: #E7E8EB;">
-      <img class="mt-4" src="./assets/logo.png" alt="SVG Image"/>
-      <div class="menu_buttons_block" style="margin-top: 100px">
+      <div class="left_navbar" style="background-color: #E7E8EB; width: 15%;">
+        <img class="mt-4" src="./assets/logo.png" alt="SVG Image"/>
+        <div class="menu_buttons_block" style="margin-top: 100px">
 
         <div class="menu_button" @click="currenyWindowState = menuWindowStates.dashboard" :class="[currenyWindowState == menuWindowStates.dashboard ? 'selected_menu_button' : '']" >
           <div class="menu_button_content">
@@ -40,7 +40,7 @@
       </div>
 
      </div> 
-     <div class="col-10">
+     <div style="width: 85%;">
        <div class="col m-0">
 
          <DashboardPage v-if="currenyWindowState == menuWindowStates.dashboard"/>

@@ -9,9 +9,12 @@
         <Modal name="m1" v-model:visible="show_add_transaction_modal" :maskClosable="false" :closable="false" :cancelButton="{text: 'cancel', onclick: () => {show_add_transaction_modal = !show_add_transaction_modal}, loading: false}" :okButton="{text: 'Add transaction +', onclick: () => {add_transaction();}, loading: false}">
             <div>
                  <div class="form-group">
-                    <div class="input-group my-3">
-                        <input type="text" class="form-control" v-model="transaction_category" placeholder="Input category" />
-                    </div>
+                    
+                    <select class="form-select" aria-label="Select transaction example" v-model="transaction_category_id">
+                        <option :value="0" selected>Select transaction category</option>
+                        <option v-for="category in categories" :value="category.id">{{ category.name }}</option>
+                    </select>
+
                     <div class="input-group my-3">
                         <input type="text" class="form-control" v-model="transaction_description" placeholder="Input description" />
                     </div>
@@ -42,7 +45,7 @@
                         <tbody>
                             <tr v-for="transaction in transactions" :key="transaction.id">
                                 <td>{{ transaction.id }}</td>
-                                <td>{{ transaction.category }}</td>
+                                <td>{{ get_category_by_id(transaction.categoryId).name }}</td>
                                 <td>{{ transaction.description }}</td>
                                 <td>{{ transaction.date }}</td>
                                 <td>{{ transaction.amount }}</td>
@@ -73,11 +76,12 @@ import { Pie } from 'vue-chartjs'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
 ChartJS.register(ArcElement, Tooltip, Legend)
 
-const transaction_category = ref('');
+const transaction_category_id = ref(0);
 const transaction_description = ref('');
 const transaction_date = ref(new Date().toISOString().slice(0,10));
 const transaction_amount = ref('');
 const transactions = ref([]);
+const categories = ref([]);
 const show_add_transaction_modal = ref(false);
 const pie_data = ref({
   "labels": [],
@@ -102,7 +106,7 @@ function add_transaction() {
 
 function save_transaction_to_db() {
     axios.post('http://localhost:3000/add_transaction', null, {params  : { 
-        category: transaction_category.value,
+        category_id: transaction_category_id.value,
         description: transaction_description.value, 
         date: transaction_date.value,
         amount: transaction_amount.value
@@ -121,6 +125,17 @@ function get_transactions_data() {
             transactions.value = response.data
         });
 }
+
+function get_categories_data() {
+
+    axios.get('http://localhost:3000/get_categories')
+    .then(response => {
+        console.log(response)
+        categories.value = response.data
+    });
+
+}
+
 function get_transactions_piechar_data() {
     axios.get('http://localhost:3000/get_transactions_piechart_data').then(response => {
         console.log(response.data)
@@ -129,8 +144,14 @@ function get_transactions_piechar_data() {
 }
 
 
+function get_category_by_id(id) {
+    console.log(id);
+    return categories.value.find(category => category.id == id);
+}
 
 
+
+get_categories_data();
 get_transactions_data();
 get_transactions_piechar_data();
 

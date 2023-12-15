@@ -4,11 +4,48 @@
             <h1>Categories</h1>
         </div>
 
+        <button type="button" class="btn btn-primary" @click="show_add_category_modal = !show_add_category_modal" >Add category +</button>
+
+        <Modal name="m1" v-model:visible="show_add_category_modal" :maskClosable="false" :closable="false" :cancelButton="{text: 'cancel', onclick: () => {show_add_category_modal = !show_add_category_modal}, loading: false}" :okButton="{text: 'Add category +', onclick: () => {add_category();}, loading: false}">
+            <div>
+                <div class="form-group">
+                    <div class="input-group my-3">
+                        <input type="text" class="form-control" v-model="category_name" placeholder="Input name" />
+                    </div>
+                </div>
+
+            </div>
+        </Modal>  
+
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <table class="table" style="border: 1px;">
+                        <thead>
+                            <tr>
+                                <th scope="col">Name</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="category in categories" :key="category.id">
+                                <td>{{ category.name }}</td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+            </div>
+        </div>
+
     </div>
 </template>
 
 <script setup>
 import axios from 'axios';
+
+import { Modal } from 'usemodal-vue3';
 
 import { ref } from 'vue'
 
@@ -16,65 +53,43 @@ import { ref } from 'vue'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
 ChartJS.register(ArcElement, Tooltip, Legend)
 
-const transaction_category = ref('');
-const transaction_description = ref('');
-const transaction_date = ref(new Date().toISOString().slice(0,10));
-const transaction_amount = ref('');
-const transactions = ref([]);
-const show_add_transaction_modal = ref(false);
-const pie_data = ref({
-  "labels": [],
-  "datasets": [
-    {
-      "backgroundColor": [],
-      "data": []
-    }
-  ]
-});
+const category_name = ref('');
 
-const pie_options = ref({
-    responsive: true,
-});
+const categories = ref([]);
+const show_add_category_modal = ref(false);
 
 
 
-function add_transaction() {
-    show_add_transaction_modal.value = !show_add_transaction_modal.value;
-    save_transaction_to_db();
+
+
+function add_category() {
+    show_add_category_modal.value = !show_add_category_modal.value;
+    save_category_to_db();
 }
 
-function save_transaction_to_db() {
-    axios.post('http://localhost:3000/add_transaction', null, {params  : { 
-        category: transaction_category.value,
-        description: transaction_description.value, 
-        date: transaction_date.value,
-        amount: transaction_amount.value
+function save_category_to_db() {
+    axios.post('http://localhost:3000/add_category', null, {params  : { 
+        name: category_name.value,
     }})
     .then(response => {
-        get_transactions_data();
-        get_transactions_piechar_data();
+        get_categories_data();
     });
 }
 
-function get_transactions_data() {
-    
-    axios.get('http://localhost:3000/get_transactions')
+function get_categories_data() {
+
+    axios.get('http://localhost:3000/get_categories')
         .then(response => {
             console.log(response)
-            transactions.value = response.data
+            categories.value = response.data
         });
-}
-function get_transactions_piechar_data() {
-    axios.get('http://localhost:3000/get_transactions_piechart_data').then(response => {
-        console.log(response.data)
-        pie_data.value = response.data;
-    });
+
 }
 
 
 
 
-get_transactions_data();
-get_transactions_piechar_data();
+
+get_categories_data();
 
 </script>
