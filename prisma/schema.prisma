@@ -34,10 +34,11 @@ model Transaction {
 }
 
 model Category {
-  id   Int    @id @default(autoincrement())
-  name String
+  id          Int    @id @default(autoincrement())
+  name        String
   Transaction Transaction[]
-  Goal Goal[]
+  Goal        Goal[]
+  isIncome    Boolean @default(false)
 }
 
 model Goal {
@@ -48,5 +49,5 @@ model Goal {
   categoryId  Int
   date        DateTime
   amount      Int
-  isSpend    Boolean @default(true)
+  isSpend     Boolean @default(true)
 }
