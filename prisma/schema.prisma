@@ -47,6 +47,7 @@ model Goal {
   userId      Int
   category    Category @relation(fields: [categoryId], references: [id])
   categoryId  Int
+  name        String
   date        DateTime
   amount      Int
   isSpend     Boolean @default(true)
