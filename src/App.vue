@@ -5,33 +5,33 @@
     <div class="row" style="height: 100vh;">
      
       <div class="left_navbar" style="background-color: #E7E8EB; width: 15%;">
-        <img class="mt-4" src="./assets/logo.png" alt="SVG Image"/>
-        <div class="menu_buttons_block" style="margin-top: 100px">
+        <img class="mt-4" src="./assets/logo.png" alt="SVG Image" width="80%"/>
+        <div class="menu_buttons_block" style="margin-top: 5vw">
 
         <div class="menu_button" @click="currenyWindowState = menuWindowStates.dashboard" :class="[currenyWindowState == menuWindowStates.dashboard ? 'selected_menu_button' : '']" >
           <div class="menu_button_content">
-            <span class="material-symbols-outlined" style="font-size: 30px;">dashboard</span>
+            <span class="material-symbols-outlined" style="font-size: 1.2vw">dashboard</span>
             <div class="menu_button_text">Dashboard</div>
           </div>
         </div>
   
         <div class="menu_button" @click="currenyWindowState = menuWindowStates.transactions" :class="[currenyWindowState == menuWindowStates.transactions ? 'selected_menu_button' : '']">
           <div class="menu_button_content">
-            <span class="material-symbols-outlined" style="font-size: 30px;">attach_money</span>
+            <span class="material-symbols-outlined" style="font-size: 1.2vw;">attach_money</span>
             <div class="menu_button_text">Transactions</div>
           </div>
         </div>
   
         <div class="menu_button" @click="currenyWindowState = menuWindowStates.goals" :class="[currenyWindowState == menuWindowStates.goals ? 'selected_menu_button' : '']">
           <div class="menu_button_content">
-            <span class="material-symbols-outlined" style="font-size: 30px;">flag </span>
+            <span class="material-symbols-outlined" style="font-size: 1.2vw;">flag </span>
             <div class="menu_button_text">Goals</div>
           </div>
         </div>
 
         <div class="menu_button" @click="currenyWindowState = menuWindowStates.categories" :class="[currenyWindowState == menuWindowStates.categories ? 'selected_menu_button' : '']">
           <div class="menu_button_content">
-            <span class="material-symbols-outlined" style="font-size: 30px;">shopping_basket</span>
+            <span class="material-symbols-outlined" style="font-size: 1.2vw;">shopping_basket</span>
             <div class="menu_button_text">Categories</div>
           </div>
         </div>
@@ -87,10 +87,10 @@ const currenyWindowState = ref(menuWindowStates.value.dashboard);
 
 .menu_button {
   width: 90%;
-  height: 60px;
-  margin: 15px;
-  padding: 15px;
-  margin-bottom: 25px;  
+  height: 3vw;
+  margin: 1vw;
+  padding: 1vw;
+  margin-bottom: 1.2vw;  
   border-radius: 40px;
   transition: background-color 0.5s ease;
   display: flex;
@@ -107,10 +107,9 @@ const currenyWindowState = ref(menuWindowStates.value.dashboard);
 
 
 .menu_button_text {
-  margin-top: 3px;
-  font-size: 17px;
+  font-size: 0.8vw;
   font-weight: bold;
-  margin-left: 10px;
+  margin-left: 0.5vw;
 }
 
 .menu_button_content {
