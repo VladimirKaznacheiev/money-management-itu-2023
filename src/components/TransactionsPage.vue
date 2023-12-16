@@ -5,22 +5,21 @@
         </h1>
         
     </div>
-    <div style="display: flex; align-items: left; margin-top: 60px;">
-        <div style="padding-top: 10px;">
-            <p style="text-align: left; color: rgba(0,0,0,0.5); margin-left: 60px; font-size: 16px;">
-                    Sort By:
-            </p>
-        </div>
-        <button type="button" class="btnsort" @click="setSort('Week')">Week</button>
-        <button type="button" class="btnsort" @click="setSort('Month')">Month</button>
-        <button type="button" class="btnsort" @click="setSort('Year')">Year</button>
+    <div style="display: flex; align-items: left; margin-top: 1.5vw;">
         <button class="btn btn-primary" type="submit" style="display: flex; align-items: center; margin-left: auto;margin-right: 40px; font-size: 16px;" @click="show_add_transaction_modal = !show_add_transaction_modal">
             <span class="material-symbols-outlined">add</span>
-            Add
+            Add new transaction
         </button>
         <Modal name="m1" v-model:visible="show_add_transaction_modal" :modalClass="'custom-modal'" :title="'Add Transaction'" :maskClosable="false" :closable="false" :cancelButton="{text: 'cancel', onclick: () => {show_add_transaction_modal = !show_add_transaction_modal}, loading: false}" :okButton="{text: 'Add transaction +', onclick: () => {add_transaction();}, loading: false}">
             <div>
                 <div class="form-group">
+                    <div class="display-type-buttons-transaction">
+                        <div class="display-type-buttons-container-transaction">
+                            <button type="button" :class="[!transaction_is_income ? 'btn-display-type-selected-transaction' : 'btn-display-type-transaction']" @click="transaction_is_income = false">Expense</button>
+                            <button type="button" :class="[transaction_is_income ? 'btn-display-type-selected-transaction' : 'btn-display-type-transaction']" @click="transaction_is_income = true">Income</button>
+                        </div>
+                    </div>
+                    <br/>
                     <select class="form-select" aria-label="Select transaction example" v-model="transaction_category_id">
                         <option :value="0" selected>Select transaction category</option>
                         <option v-for="category in categories" :value="category.id">{{ category.name }}</option>
@@ -34,6 +33,8 @@
                     <div class="input-group my-3">
                         <input type="number" class="form-control" v-model="transaction_amount" placeholder="Input amount $" />
                     </div>
+
+
                 </div>
             </div>
         </Modal>
@@ -85,8 +86,6 @@ import { ref, computed } from 'vue';
 
 import { Modal } from 'usemodal-vue3';
 
-import { Pie } from 'vue-chartjs';
-
 import { format } from 'date-fns';
 
 import { onMounted } from 'vue';
@@ -95,26 +94,15 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 ChartJS.register(ArcElement, Tooltip, Legend)
 const sort = ref('');
 const transaction_category_id = ref(0);
-const transaction_category = ref('');
 const transaction_description = ref('');
 const transaction_date = ref(new Date().toISOString().slice(0,10));
-const transaction_amount = ref('');
+const transaction_amount = ref();
+const transaction_is_income = ref(false);
 const transactions = ref([]);
 const categories = ref([]);
 const show_add_transaction_modal = ref(false);
-const pie_data = ref({
-  "labels": [],
-  "datasets": [
-    {
-      "backgroundColor": [],
-      "data": []
-    }
-]
-});
 
-const pie_options = ref({
-    responsive: true,
-});
+
 onMounted(() => {
   get_categories_data();
   get_transactions_data();
@@ -133,7 +121,8 @@ function save_transaction_to_db() {
         category_id: transaction_category_id.value,
         description: transaction_description.value, 
         date: transaction_date.value,
-        amount: transaction_amount.value
+        amount: transaction_amount.value,
+        is_income: transaction_is_income.value
     }})
     .then(response => {
         get_transactions_data();
@@ -246,9 +235,12 @@ const paginatedTransactions = computed(() => {
 
 
 </script>
+
+
 <style>
 .btnsort{
     color: #00658D  ;
+    border-style: solid;
     background-color: transparent;
     background-image: none;
     border-color: #71787E;
@@ -275,6 +267,54 @@ const paginatedTransactions = computed(() => {
     font-size: 16px;
     color: rgba(0,0,0,0.5);
 
+}
+
+.display-type-buttons-transaction{
+    display: flex;
+    justify-content: center;
+}
+
+.display-type-buttons-container-transaction{
+    background-color: #edeef2;
+    
+    border-radius: 20px;
+
+}
+
+.btn-display-type-transaction{
+    /* background: #00658D; */
+    background-color: #edeef2;
+    border: none;
+    width: 200px;
+    padding: 10px;
+    border-radius: 20px;
+    height: 40px;
+
+    font-weight: normal;
+    font-size: 15px;
+    transition: background-color 0.5s ease;
+    
+}
+
+.btn-display-type-transaction:hover{
+    /* background: #00658D; */
+    background-color: #e0e1e6;
+
+    
+}
+
+.btn-display-type-selected-transaction{
+    /* background: #00658D; */
+    background-color: #C6E7FF;
+    border: none;
+    width: 200px;
+    padding: 10px;
+    border-radius: 20px;
+    height: 40px;
+
+    font-weight: normal;
+    font-size: 15px;
+    
 }
 
 .custom-modal {

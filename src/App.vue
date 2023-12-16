@@ -61,8 +61,8 @@ import DashboardPage from './components/DashboardPage.vue'
 import TransactionsPage from './components/TransactionsPage.vue'
 import GoalsPage from './components/GoalsPage.vue'
 import CategoriesPage from './components/CategoriesPage.vue'
-
-import { ref } from 'vue'
+// import { useRoute, useRouter } from "vue-router";
+import { ref, onMounted, watch  } from 'vue'
 
 const menuWindowStates = ref({
   dashboard: 0,
@@ -72,6 +72,39 @@ const menuWindowStates = ref({
 });
 
 const currenyWindowState = ref(menuWindowStates.value.dashboard);
+
+
+// const route = useRoute();
+// const myRoute = ref(route)
+// const router = useRouter();
+
+
+// watch(() => {
+//   // if (route){
+//     myRoute.value = route
+//     console.log('Current Route:', myRoute);
+//     open_current_window();
+//   // }
+// })
+
+
+
+// function open_current_window() {
+//   console.log('Current Route:', myRoute.path);
+//   if (myRoute.path == "/dashboard") {
+//     currenyWindowState.value = menuWindowStates.value.dashboard;
+//   } else if (myRoute.path == "/transactions") {
+//     currenyWindowState.value = menuWindowStates.value.transactions;
+//   } else if (myRoute.path == "/goals") {
+//     currenyWindowState.value = menuWindowStates.value.goals;
+//   } else if (myRoute.path == "/categories") {
+//     currenyWindowState.value = menuWindowStates.value.categories;
+//   }
+// }
+
+// onMounted(() => {
+//   open_current_window();
+// });
 
 
 </script>
@@ -98,7 +131,7 @@ const currenyWindowState = ref(menuWindowStates.value.dashboard);
 }
 
 .menu_button:hover {
-  background-color: #C6E7FF;
+  background-color: #d6eeff;
 }
 
 .selected_menu_button {
@@ -109,7 +142,7 @@ const currenyWindowState = ref(menuWindowStates.value.dashboard);
 .menu_button_text {
   font-size: 0.8vw;
   font-weight: bold;
-  margin-left: 0.5vw;
+  margin-left: 0.8vw;
 }
 
 .menu_button_content {

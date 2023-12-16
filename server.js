@@ -5,6 +5,7 @@ app.use(cors());
 const port = 3000;
 // const db = new sqlite3.Database('money_management_database.db');
 const { PrismaClient } = require("@prisma/client");
+// const { is } = require('core-js/core/object');
 
 function getRandomColor() {
     const letters = '0123456789ABCDEF';
@@ -56,27 +57,41 @@ app.get('/get_transactions_piechart_data', async (req, res) => {
         }, {});
 
         console.log(categoriesDict);
+        let final_amount = 0;
+        let income_amount = 0;
+        let expense_amount = 0;
 
         transactions.forEach(transaction => {
-            const { categoryId, amount } = transaction;
+            const { categoryId, amount, isIncome } = transaction;
 
+            if (isIncome == (req.query.is_income === 'true')) {
             
-            const category = categoriesDict[String(categoryId)];
+              const category = categoriesDict[String(categoryId)];
 
-            console.log(category);
+              console.log(category);
 
-            
-            if (category in categorySums) {
-              categorySums[category] += amount;
-            } else {
-              categorySums[category] = amount;
+              
+              if (category in categorySums) {
+                categorySums[category] += amount;
+              } else {
+                categorySums[category] = amount;
+              }
             }
+
+            final_amount += amount;
+            
+            if (isIncome) {
+                income_amount += amount;
+            }else{
+                expense_amount += amount;
+            }
+
           });
         const labels = Object.keys(categorySums);
         const data = Object.values(categorySums);
         const randomColors = Array.from({ length: labels.length }, () => getRandomColor());
 
-        const result = {labels: labels, datasets:[{data: data, backgroundColor: randomColors}]};
+        const result = {labels: labels, datasets:[{data: data, backgroundColor: randomColors}], final_amount: final_amount, income_amount: income_amount, expense_amount: expense_amount};
         console.log(result);
         res.json(result);
     } catch (error) {
@@ -107,8 +122,10 @@ app.post('/add_transaction', async (req, res) => {
     try {
         const date = new Date(req.query.date);
 
+
         const newTransaction = await prisma.Transaction.create({
             data: {
+                isIncome: req.query.is_income === 'true',
                 categoryId: parseInt(req.query.category_id, 10),
                 description: req.query.description,
                 date: date.toISOString(),
