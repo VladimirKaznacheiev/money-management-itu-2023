@@ -47,17 +47,18 @@ app.get('/get_transactions_piechart_data', async (req, res) => {
     try {
         const transactions = await prisma.Transaction.findMany();
         const categorySums = {};
+        const categoryIcons = [];
 
         const categories = await prisma.Category.findMany();
 
         // Transform the array of instances into a dictionary
         const categoriesDict = categories.reduce((acc, instance) => {
-          acc[parseInt(instance.id, 10)] = instance.name;
+          acc[parseInt(instance.id, 10)] = {name: instance.name, icon: instance.iconName};
           return acc;
         }, {});
 
         console.log(categoriesDict);
-        let final_amount = 0;
+
         let income_amount = 0;
         let expense_amount = 0;
 
@@ -71,14 +72,14 @@ app.get('/get_transactions_piechart_data', async (req, res) => {
               console.log(category);
 
               
-              if (category in categorySums) {
-                categorySums[category] += amount;
+              if (category.name in categorySums) {
+                categorySums[category.name] += amount;
               } else {
-                categorySums[category] = amount;
+                categorySums[category.name] = amount;
+                categoryIcons.push(category.icon);
               }
             }
 
-            final_amount += amount;
             
             if (isIncome) {
                 income_amount += amount;
@@ -91,7 +92,7 @@ app.get('/get_transactions_piechart_data', async (req, res) => {
         const data = Object.values(categorySums);
         const randomColors = Array.from({ length: labels.length }, () => getRandomColor());
 
-        const result = {labels: labels, datasets:[{data: data, backgroundColor: randomColors}], final_amount: final_amount, income_amount: income_amount, expense_amount: expense_amount};
+        const result = {labels: labels, datasets:[{data: data, backgroundColor: randomColors}], income_amount: income_amount, expense_amount: expense_amount, categoryIcons: categoryIcons};
         console.log(result);
         res.json(result);
     } catch (error) {

@@ -71,9 +71,16 @@
                                                     <div :style="getColorStyle(color)" class="color-circle"></div>
                                                 </td>
 
+                                                
+                                                <td>
+                                                    <span class="material-symbols-outlined" style="font-size: 2vw; margin-left: 1vw;">
+                                                        {{pie_data.categoryIcons[index]}}
+                                                    </span>
+                                                </td>
                                                 <td>
                                                     <p class="char-data-element-label">{{pie_data.labels[index]}}</p>
                                                 </td>
+
 
                                                 <td>
                                                     <p class="char-data-element-data">{{pie_data.datasets[0].data[index]}} $</p>
@@ -81,7 +88,7 @@
                                                 </td>
 
                                                 <td>
-                                                    <p class="char-data-element-data">{{Number(((pie_data.datasets[0].data[index] / pie_data.final_amount)*100).toFixed(1))}} %</p>
+                                                    <p class="char-data-element-data">{{Number(((pie_data.datasets[0].data[index] / (isIncomePage ? pie_data.income_amount : pie_data.expense_amount))*100).toFixed(1))}} %</p>
 
                                                 </td>
     

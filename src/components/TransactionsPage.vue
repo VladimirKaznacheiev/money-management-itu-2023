@@ -45,6 +45,7 @@
                     <table class="table">
                         <thead>
                             <tr class="table-secondary">
+                                <th scope="col"></th> 
                                 <th scope="col">Category</th>
                                 <th scope="col">Description</th>
                                 <th scope="col">Date</th>
@@ -54,6 +55,14 @@
                         </thead>
                         <tbody>
                             <tr v-for="transaction in paginatedTransactions" :key="transaction.id">
+                                <td>
+                                    <span v-if="transaction.isIncome" class="material-symbols-outlined" style="color: green;">
+                                        keyboard_double_arrow_up
+                                    </span>
+                                    <span v-else class="material-symbols-outlined" style="color: red">
+                                        keyboard_double_arrow_down
+                                    </span>
+                                </td>
                                 <td>{{ get_category_name_by_id(transaction.categoryId) }}</td>
                                 <td>{{ transaction.description }}</td>
                                 <td>{{ formatISODateToDateTime(transaction.date) }}</td>
