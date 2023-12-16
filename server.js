@@ -149,6 +149,7 @@ app.post('/add_category', async (req, res) => {
         const newCategory = await prisma.Category.create({
             data: {
                 name: req.query.name,
+                iconName: req.query.icon_name,
             },
         });
         console.log('Created new category:', newCategory);

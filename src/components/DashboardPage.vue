@@ -57,7 +57,7 @@
                             <div v-if="pie_data" class="row">
 
                                 <div class="col-6">
-                                    <div style="height: 28vw;">
+                                    <div style="height: 26vw;">
                                         <Doughnut :data="pie_data" :options="pie_options"/>
     
                                     </div>

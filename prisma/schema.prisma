@@ -36,6 +36,7 @@ model Transaction {
 model Category {
   id          Int    @id @default(autoincrement())
   name        String
+  iconName    String
   Transaction Transaction[]
   Goal        Goal[]
   isIncome    Boolean @default(false)
