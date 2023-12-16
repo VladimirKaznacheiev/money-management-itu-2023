@@ -45,7 +45,7 @@
                         <tbody>
                             <tr v-for="transaction in transactions" :key="transaction.id">
                                 <td>{{ transaction.id }}</td>
-                                <td>{{ get_category_by_id(transaction.categoryId).name }}</td>
+                                <td>{{ get_category_name_by_id(transaction.categoryId) }}</td>
                                 <td>{{ transaction.description }}</td>
                                 <td>{{ transaction.date }}</td>
                                 <td>{{ transaction.amount }}</td>
@@ -72,6 +72,7 @@ import { Modal } from 'usemodal-vue3';
 
 import { Pie } from 'vue-chartjs'
 
+import { onMounted } from 'vue';
 
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
 ChartJS.register(ArcElement, Tooltip, Legend)
@@ -144,15 +145,21 @@ function get_transactions_piechar_data() {
 }
 
 
-function get_category_by_id(id) {
+function get_category_name_by_id(id) {
     console.log(id);
-    return categories.value.find(category => category.id == id);
+    let elem = categories.value.find(category => category.id == id);
+    if (elem != null) {
+        return elem.name;
+    }
 }
 
 
+onMounted(() => {
+  get_categories_data();
+  get_transactions_data();
+  get_transactions_piechar_data();
 
-get_categories_data();
-get_transactions_data();
-get_transactions_piechar_data();
+});
+
 
 </script>
