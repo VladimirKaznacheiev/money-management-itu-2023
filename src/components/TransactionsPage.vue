@@ -59,7 +59,7 @@
                                 <td>{{ formatISODateToDateTime(transaction.date) }}</td>
                                 <td>{{ transaction.amount }} $</td>
                                 <td>
-                                    <button style="background: none; border: none;">
+                                    <button @click="delete_transaction(transaction.id)" style="background: none; border: none;">
                                         <span class="material-symbols-outlined" style="font-size: 18px; color: #71787E;">delete</span>
                                     </button>
                                 </td>
@@ -140,12 +140,21 @@ function get_transactions_data() {
 
 function get_categories_data() {
 
-axios.get('http://localhost:3000/get_categories')
-.then(response => {
-    console.log(response)
-    categories.value = response.data
-});
+    axios.get('http://localhost:3000/get_categories')
+    .then(response => {
+        console.log(response)
+        categories.value = response.data
+    });
 
+}
+
+function delete_transaction(id) {
+    axios.delete('http://localhost:3000/delete_transaction', {params  : { 
+        id: id
+    }})
+    .then(response => {
+        get_transactions_data();
+    });
 }
 
 
@@ -208,6 +217,7 @@ function formatISODateToDateTime(isoDateString) {
     const dateTime = new Date(isoDateString);
     return format(dateTime, 'dd-MM-yyyy HH:mm');
 }
+
 const itemsPerPage = ref(20);
 const currentPage = ref(1);
 

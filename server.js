@@ -143,6 +143,26 @@ app.post('/add_transaction', async (req, res) => {
       
 });
 
+app.delete('/delete_transaction', async (req, res) => {
+    const prisma = new PrismaClient();
+    try {
+        const deletedTransaction = await prisma.Transaction.delete({
+            where: {
+                id: parseInt(req.query.id, 10),
+            },
+        });
+        console.log('Deleted transaction:', deletedTransaction);
+        // Respond with the created user
+        res.status(200).json(deletedTransaction);
+    } catch (error) {
+        console.error('Error deleting a transaction:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+      prisma.$disconnect();
+    
+});
+
+
 app.post('/add_category', async (req, res) => {
     const prisma = new PrismaClient();
     try {
