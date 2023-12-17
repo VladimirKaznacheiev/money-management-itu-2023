@@ -184,6 +184,61 @@ app.post('/add_category', async (req, res) => {
       
 });
 
+app.post('/add_goal', async (req, res) => {
+    const prisma = new PrismaClient();
+    try {
+        const date = new Date(req.query.date);
+
+        const newGoal = await prisma.Goal.create({
+            data: {
+                categoryId: parseInt(req.query.category_id, 10),
+                name: req.query.name,
+                date: date.toISOString(),
+                amount: parseInt(req.query.amount),
+                isSpend: req.query.is_spend === 'true',
+            },
+        });
+        console.log('Created new goal:', newGoal);
+        // Respond with the created user
+        res.status(200).json(newGoal);
+    } catch (error) {
+        console.error('Error creating a new goal:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+        prisma.$disconnect();
+});
+
+app.get('/get_goals', async (req, res) => {
+    const prisma = new PrismaClient();
+    try {
+        const goals = await prisma.Goal.findMany();
+        console.log(goals);
+        res.json(goals);
+    } catch (error) {
+        console.error('Error getting goals:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+      prisma.$disconnect();
+});
+
+app.delete('/delete_goal', async (req, res) => {
+    const prisma = new PrismaClient();
+    try {
+        const deletedGoal = await prisma.Goal.delete({
+            where: {
+                id: parseInt(req.query.id, 10),
+            },
+        });
+        console.log('Deleted goal:', deletedGoal);
+        // Respond with the created user
+        res.status(200).json(deletedGoal);
+    } catch (error) {
+        console.error('Error deleting a goal:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+      prisma.$disconnect();
+
+});
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
