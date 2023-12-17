@@ -194,7 +194,7 @@ function add_category() {
 
     category_name.value = '';
     selectedIcon.value = icons[0];
-    transaction_is_income.value = false;
+    category_is_income.value = false;
 }
 
 function save_category_to_db() {

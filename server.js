@@ -144,8 +144,8 @@ app.get('/get_transactions_piechart_data', async (req, res) => {
 
 app.get('/get_categories', async (req, res) => {
     const prisma = new PrismaClient();
-try {
-                  const categories = await prisma.Category.findMany();
+    try {
+          const categories = await prisma.Category.findMany();
           console.log(categories);
           res.json(categories);
     } catch (error) {
@@ -277,6 +277,29 @@ app.get('/get_goals', async (req, res) => {
     const prisma = new PrismaClient();
     try {
         const goals = await prisma.Goal.findMany();
+
+        for (let index = 0; index < goals.length; index++) {
+            const element = goals[index];
+
+            const transactions = await prisma.Transaction.findMany({
+
+                where: {
+                    categoryId: element.categoryId,
+                    isIncome: false,
+                },
+            });
+
+            let sum = 0;
+            transactions.forEach(transaction => {
+                sum += transaction.amount;
+            });
+
+            element['spent'] = sum;
+
+            
+        }
+
+
         console.log(goals);
         res.json(goals);
     } catch (error) {
