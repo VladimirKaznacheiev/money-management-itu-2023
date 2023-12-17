@@ -16,7 +16,7 @@
                 <span class="material-symbols-outlined">add</span>
                 Add new category
             </button>
-            <Modal name="m1" v-model:visible="show_add_category_modal" :maskClosable="false" :closable="false" :title="'Add new category'" :cancelButton="{text: 'Cancel', onclick: () => {show_add_category_modal = !show_add_category_modal; selectedIcon = icons[0]; category_is_income = false; category_name = '';}, loading: false}" :okButton="{text: 'Add', onclick: () => {add_category(); selectedIcon = icons[0]; category_is_income = false;}, loading: false}">
+          <Modal name="m1" v-model:visible="show_add_category_modal" :maskClosable="false" :closable="false" :title="editCategoryId ? 'Edit category' : 'Add new category'" :cancelButton="{text: 'Cancel', onclick: () => {show_add_category_modal = !show_add_category_modal; selectedIcon = icons[0]; category_is_income = false; category_name = '';}, loading: false}" :okButton="{text: editCategoryId ? 'Save' : 'Add', onclick: () => {add_category(); selectedIcon = icons[0]; category_is_income = false;}, loading: false}">
               <div>
                 <div class="display-type-buttons-transaction">
                     <div class="display-type-buttons-container-transaction">
@@ -49,6 +49,9 @@
                 </div>
                 <div class="category-name">{{ category.name }}
                 </div>
+                <button @click="editCategory(category.id)" style="background: none; border: none;">
+                  <span class="material-symbols-outlined" style="font-size: 18px; color: #71787E;">edit</span>
+                </button>
             </div>
         </div>
         <div class="pagination">
@@ -186,15 +189,19 @@ const selectedCat = ref(null);
 const category_is_income = ref(false);
 const category_is_income_filt = ref(false);
 
-
-
 function add_category() {
-    show_add_category_modal.value = !show_add_category_modal.value;
+  if (editCategoryId.value) {
+    update_category(editCategoryId.value);
+  } else {
     save_category_to_db();
+  }
 
-    category_name.value = '';
-    selectedIcon.value = icons[0];
-    category_is_income.value = false;
+  editCategoryId.value = null;
+  category_name.value = '';
+  selectedIcon.value = icons[0];
+  category_is_income.value = false;
+
+  show_add_category_modal.value = false;
 }
 
 function save_category_to_db() {
@@ -291,6 +298,36 @@ function deleteCategory() {
       .catch(error => {
         console.error('Error deleting a category:', error);
       });
+}
+
+const editCategoryId = ref(null);
+
+function editCategory(id) {
+  editCategoryId.value = id;
+  const selectedCategory = categories.value.find(category => category.id === id);
+
+  // Populate the form fields with the selected category's data
+  category_name.value = selectedCategory.name;
+  selectedIcon.value = selectedCategory.iconName;
+  category_is_income.value = selectedCategory.isIncome;
+
+  // Open the modal
+  show_add_category_modal.value = true;
+}
+
+function update_category(id) {
+  axios.put('http://localhost:3000/edit_category', null, {
+    params: {
+      id: id,
+      name: category_name.value,
+      icon_name: selectedIcon.value,
+      is_income: category_is_income.value
+    }
+  }).then(response => {
+    console.log('Updated category:', response.data);
+    show_add_category_modal.value = false;
+    get_categories_data();
+  });
 }
 
 get_categories_data();

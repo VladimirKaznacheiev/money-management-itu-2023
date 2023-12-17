@@ -178,7 +178,7 @@ app.put('/edit_category', async (req, res) => {
     }
 });
 
-app.put('/edit_category/:id', async (req, res) => {
+app.put('/edit_category', async (req, res) => {
     const prisma = new PrismaClient();
     try {
         const categoryId = parseInt(req.params.id, 10);
