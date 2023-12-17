@@ -8,12 +8,12 @@
           <span class="material-symbols-outlined">add</span>
           Add new goal
         </button>
-        <Modal name="m1" v-model:visible="show_add_goal_modal" :modalClass="'custom-modal'" :title="'Add Transaction'" :maskClosable="false" :closable="false" :cancelButton="{text: 'cancel', onclick: () => {show_add_goal_modal = !show_add_goal_modal}, loading: false}" :okButton="{text: 'Add transaction +', onclick: () => {add_goal();}, loading: false}">
+        <Modal name="m1" v-model:visible="show_add_goal_modal" :modalClass="'custom-modal'" :title="'Add Goal'" :maskClosable="false" :closable="false" :cancelButton="{text: 'cancel', onclick: () => {show_add_goal_modal = !show_add_goal_modal}, loading: false}" :okButton="{text: 'Add transaction +', onclick: () => {add_goal();}, loading: false}">
           <div>
             <div class="display-type-buttons-transaction">
               <div class="display-type-buttons-container-transaction">
-                <button type="button" :class="[!goal_is_spend ? 'btn-display-type-selected-transaction' : 'btn-display-type-transaction']" @click="goal_is_spend = false">Spend</button>
-                <button type="button" :class="[goal_is_spend ? 'btn-display-type-selected-transaction' : 'btn-display-type-transaction']" @click="goal_is_spend = true">Save</button>
+                <button type="button" :class="[goal_is_spend ? 'btn-display-type-selected-transaction' : 'btn-display-type-transaction']" @click="goal_is_spend = true">Spend</button>
+                <button type="button" :class="[!goal_is_spend ? 'btn-display-type-selected-transaction' : 'btn-display-type-transaction']" @click="goal_is_spend = false">Save</button>
               </div>
             </div>
             <br/>
@@ -40,14 +40,21 @@
             :closable="false"
             :cancelButton="{ text: 'Close', onclick: closeGoalModal, loading: false }"
             :okButton="{ text: 'Edit', onclick: editGoal, buttonClass: 'btn-delete', loading: false }">
-            <div>
-            <h2>{{ goalToDisplay.name }}</h2>
-            <p>{{ get_category_name_by_id(goalToDisplay.categoryId) }}</p>
-            <p>${{ goalToDisplay.amount }}</p>
-            <p>Due to: {{ formatISODateToDateTime(goalToDisplay.date) }}</p>
+            <div style="text-align: left;">
+              <div style="display: flex;">
+                <p>Name: </p>
+                <p style="font-weight: bold; margin-left: 0.5vw;"> {{ goalToDisplay.name }}</p>
+              </div>
+              <div style="display: flex;">
+                <p>
+                  Spend <b>{{ goalToDisplay.isSpend ? 'more' : 'less' }} than ${{ goalToDisplay.amount }}</b> on category: {{ get_category_name_by_id(goalToDisplay.categoryId) }}
+                </p>
+                <span class="material-symbols-outlined">{{  get_category_icon_by_id(goalToDisplay.categoryId) }}</span>
+              </div>
+              <p>Due to: {{ formatISODateToDateTime(goalToDisplay.date) }}</p>
 
+              <span @click="deleteGoal()" style="color: red; cursor: pointer;" class="material-symbols-outlined"> delete </span>
 
-            <button @click="deleteGoal()" class="btn-delete">Delete</button>
           </div>
         </Modal>
       </div>
@@ -55,23 +62,37 @@
         <div class="goal-card" v-for="goal in goals" :key="goal.id" @click="openGoalModal(goal)">
           <div class="goal-card-content">
 
+            <span class="material-symbols-outlined" style="float: right; margin-right: 1vw; font-size: 1.5vw;">
+              {{ get_category_icon_by_id(goal.categoryId) }}
+            </span>
+
+            
             <p class="goal-card-content-header">
               {{ goal.name }}
             </p>
+
+            
+
             
             <p class="goal-card-content-text" >
-              {{ goal.isSpend ? 'Spend' : 'Save' }} ${{ goal.amount }} on category: {{ get_category_name_by_id(goal.categoryId) }}
+              Spend <b>{{ goal.isSpend ? 'more' : 'less' }} than ${{ goal.amount }}</b> on category: {{ get_category_name_by_id(goal.categoryId) }}
             </p>
             <p class="goal-card-content-text" style="font-weight: bold;">
-              123$ / {{goal.amount}}$
+              {{ goal.spent }}$ / {{goal.amount}}$
             </p>
-
+            
             <div style="background: grey; height: 0.3vw; margin-right: 1.5vw; border-radius: 1vw;">
-              <div style="background: #00658b; height: 0.3vw; border-radius: 1vw;" :style="{width: Math.floor((123/ goal.amount)*100)+'%'}">
-
-</div>
+              <div style="background: #00658b; height: 0.3vw; border-radius: 1vw;" :style="{width: Math.min(Math.floor((goal.spent/ goal.amount)*100), 100)+'%'}">
+                
+              </div>
             </div>  
             <br/>
+            <span v-if="(goal.isSpend && goal.spent >= goal.amount) || (!goal.isSpend && goal.spent < goal.amount)" class="material-symbols-outlined" style="color: green;">
+              done
+            </span>
+            <span v-else class="material-symbols-outlined" style="color: red;">
+              close
+            </span>
             <p class="goal-card-content-text" style="float: right; margin-right: 1vw;">
               Due to: {{ formatISODateToDateTime(currentTime) }}
             </p>
@@ -165,6 +186,13 @@ function get_category_name_by_id(id) {
     return elem.name;
   }
 }
+function get_category_icon_by_id(id) {
+  console.log(id);
+  let elem = categories.value.find(category => category.id == id);
+  if (elem != null) {
+    return elem.iconName;
+  }
+}
 
 function delete_goal(id) {
   axios.delete('http://localhost:3000/delete_goal', {params  : {
@@ -241,6 +269,7 @@ function deleteGoal() {
   margin-bottom: 2vw;
   text-align: left;
   box-shadow: 1px 5px 10px lightgrey;
+  cursor: pointer;
 }
 
 .goal-cards-container{
