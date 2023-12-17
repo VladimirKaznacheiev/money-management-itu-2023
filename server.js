@@ -105,10 +105,10 @@ app.get('/get_transactions_piechart_data', async (req, res) => {
 
 app.get('/get_categories', async (req, res) => {
     const prisma = new PrismaClient();
-    try {
-        const categories = await prisma.Category.findMany();
-        console.log(categories);
-        res.json(categories);
+try {
+                  const categories = await prisma.Category.findMany();
+          console.log(categories);
+          res.json(categories);
     } catch (error) {
         console.error('Error getting categories:', error);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -166,11 +166,13 @@ app.delete('/delete_transaction', async (req, res) => {
 
 app.post('/add_category', async (req, res) => {
     const prisma = new PrismaClient();
+    let isIncome = req.query.is_income === 'true';
     try {
         const newCategory = await prisma.Category.create({
             data: {
                 name: req.query.name,
                 iconName: req.query.icon_name,
+                isIncome: isIncome,
             },
         });
         console.log('Created new category:', newCategory);

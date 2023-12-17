@@ -20,9 +20,10 @@
                         </div>
                     </div>
                     <br/>
-                    <select class="form-select" aria-label="Select transaction example" v-model="transaction_category_id">
+                    <select class="form-select" aria-label="Select transaction" v-model="transaction_category_id">
                         <option :value="0" selected>Select transaction category</option>
-                        <option v-for="category in categories" :value="category.id">{{ category.name }}</option>
+                        <option v-if="transaction_is_income" v-for="category in categories.filter(property => property.isIncome)" :value="category.id">{{ category.name }}</option>
+                        <option v-if="!transaction_is_income" v-for="category in categories.filter(property => !property.isIncome)" :value="category.id">{{ category.name }}</option>
                     </select>
                     <div class="input-group my-3">
                         <input type="text" class="form-control" v-model="transaction_description" placeholder="Input description" />
