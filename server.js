@@ -81,6 +81,45 @@ app.put('/edit_transaction', async (req, res) => {
     }
 });
 
+app.put('/edit_goal', async (req, res) => {
+    const prisma = new PrismaClient();
+    try {
+        const transactionId = parseInt(req.query.id, 10);
+
+        const existingTransaction = await prisma.Goal.findUnique({
+            where: {
+                id: transactionId,
+            },
+        });
+
+        if (!existingTransaction) {
+            return res.status(404).json({ error: 'Transaction not found' });
+        }
+
+        // Update transaction fields based on the provided data
+        const updatedTransaction = await prisma.Goal.update({
+            where: {
+                id: transactionId,
+            },
+            data: {
+                isSpend: req.query.is_spend === 'true',
+                name: req.query.name,
+                categoryId: parseInt(req.query.category_id, 10),
+                date: new Date(req.query.date).toISOString(),
+                amount: parseInt(req.query.amount),
+            },
+        });
+
+        console.log('Updated transaction:', updatedTransaction);
+        res.status(200).json(updatedTransaction);
+    } catch (error) {
+        console.error('Error updating transaction:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    } finally {
+        prisma.$disconnect();
+    }
+});
+
 app.get('/get_transactions_piechart_data', async (req, res) => {
   const prisma = new PrismaClient();
   try {

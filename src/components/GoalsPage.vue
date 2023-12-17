@@ -57,6 +57,37 @@
 
           </div>
         </Modal>
+        <Modal
+            v-model:visible="showGoalEditModal"
+            :modalClass="'custom-modal'"
+            :title="'Edit Goal'"
+            :maskClosable="false"
+            :closable="false"
+            :cancelButton="{ text: 'Close', onclick: closeGoalEditModal, loading: false }"
+            :okButton="{ text: 'Edit', onclick: edit_goal, buttonClass: 'btn-delete', loading: false }">
+            <div>
+              <div class="display-type-buttons-transaction">
+                <div class="display-type-buttons-container-transaction">
+                  <button type="button" :class="[goal_is_spend ? 'btn-display-type-selected-transaction' : 'btn-display-type-transaction']" @click="goal_is_spend = true">Spend</button>
+                  <button type="button" :class="[!goal_is_spend ? 'btn-display-type-selected-transaction' : 'btn-display-type-transaction']" @click="goal_is_spend = false">Save</button>
+                </div>
+              </div>
+              <br/>
+              <div class="input-group my-3">
+                <input type="text" class="form-control" v-model="goal_name" placeholder="Input name" />
+              </div>
+              <select class="form-select" aria-label="Select transaction example" v-model="goal_category_id">
+                <option :value="0" selected>Select goal category</option>
+                <option v-for="category in categories" :value="category.id">{{ category.name }}</option>
+              </select>
+              <div class="input-group my-3">
+                <input type="date" class="form-control" v-model="goal_date" placeholder="Goal date" />
+              </div>
+              <div class="input-group my-3">
+                <input type="number" class="form-control" v-model="goal_amount" placeholder="Input amount $" />
+              </div>
+            </div>    
+        </Modal>
       </div>
       <div class="goal-cards-container">
         <div class="goal-card" v-for="goal in goals" :key="goal.id" @click="openGoalModal(goal)">
@@ -94,7 +125,7 @@
               close
             </span>
             <p class="goal-card-content-text" style="float: right; margin-right: 1vw;">
-              Due to: {{ formatISODateToDateTime(currentTime) }}
+              Due to: {{ formatISODateToDateTime(goal.date) }}
             </p>
           </div>
             
@@ -141,6 +172,26 @@ const goalProgress = computed(() => {
     return { id: goal.id, progress };
   });
 });
+
+function editGoal() {
+  goal_category_id.value = goalToDisplay.value.categoryId;
+  goal_name.value = goalToDisplay.value.name;
+
+  var originalDate = new Date(goalToDisplay.value.date);
+  var year = originalDate.getFullYear();
+  var month = (originalDate.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-indexed, so add 1
+  var day = originalDate.getDate().toString().padStart(2, '0');
+  var formattedDateString = `${year}-${month}-${day}`;
+
+
+  goal_date.value = formattedDateString;
+
+  console.log(goal_date.value);
+  goal_amount.value = goalToDisplay.value.amount;
+  goal_is_spend.value = goalToDisplay.value.isSpend;
+  showGoalModal.value = false;
+  showGoalEditModal.value = true;
+}
 
 function add_goal() {
   show_add_goal_modal.value = !show_add_goal_modal.value;
@@ -206,16 +257,17 @@ function delete_goal(id) {
 
 function edit_goal() {
   axios.put('http://localhost:3000/edit_goal', null, {params  : {
-      id: goalToDisplay.id,
-      category_id: goalToDisplay.categoryId,
-      name: goalToDisplay.name,
-      date: goalToDisplay.date,
-      amount: goalToDisplay.amount,
-      is_spend: goalToDisplay.isSpend
+      id: goalToDisplay.value.id,
+      category_id: goal_category_id.value,
+      name: goal_name.value,
+      date: goal_date.value,
+      amount: goal_amount.value,
+      is_spend: goal_is_spend.value
     }})
       .then(response => {
         console.log(response)
         get_goals_data();
+        closeGoalEditModal();
       });
 }
 
@@ -226,6 +278,7 @@ function formatISODateToDateTime(isoDateString) {
 
 const goalToDisplay = ref({});
 const showGoalModal = ref(false);
+const showGoalEditModal = ref(false);
 
 function openGoalModal(goal) {
   goalToDisplay.value = goal;
@@ -234,6 +287,10 @@ function openGoalModal(goal) {
 
 function closeGoalModal() {
   showGoalModal.value = false;
+}
+
+function closeGoalEditModal() {
+  showGoalEditModal.value = false;
 }
 
 
