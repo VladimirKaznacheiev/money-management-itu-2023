@@ -34,11 +34,14 @@
         </Modal>
       </div>
       <div>
-        <div class="card">
+        <div class="card" v-for="goal in goals" :key="goal.id" @click="openGoalModal(goal)">
           <div class="card-content">
             <div v-for="goal in goals" :key="goal.id">
               <div class="card_small">
                 <div class="card-content">
+                  <div style="position: absolute; top: 25px; right: 35px; font-size: 18px; color: #71787E;">
+                    {{ goal_is_spend ? 'Spend' : 'Save' }}
+                  </div>
                   <h2 style="font-size: 25px; margin-left: -40px; margin-top: 5px; color: black;">
                     {{ goal.name }}
                   </h2>
@@ -48,23 +51,33 @@
                   <p style="font-size: 20px; margin-left: -40px; margin-top: -6px; color: black;">
                     ${{ goal.amount }}
                   </p>
-                  <p style="font-size: 20px; margin-left: -40px; margin-top: -6px; color: black;">
-                    {{ formatISODateToDateTime(goal.date) }}
-                  </p>
-                  <div style="margin-top: 10px; margin-left: 160px; margin-right: 2px; display: flex;">
-                    <span @click="edit_goal(goal.id)" style="cursor: pointer; color: #71787E; margin-left: 10px; margin-top: 10px;">
-                     Edit
-                    </span>
-                    <span @click="delete_goal(goal.id)" style="cursor: pointer; color: red; margin-left: 20px; margin-top: 10px;">
-                     Delete
-                    </span>
+                  <div style=" bottom: 10px; right: 10px; margin-left: 140px; font-size: 18px; color: black;">
+                    Due to: {{ formatISODateToDateTime(currentTime) }}
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
+        <Modal
+            name="goalModal"
+            :visible="showGoalModal"
+            :modalClass="'custom-modal'"
+            :title="'Goal Information'"
+            :maskClosable="false"
+            :closable="false"
+            :cancelButton="{ text: 'Close', onclick: closeGoalModal, loading: false }"
+            :okButton="{ text: 'Edit', onclick: editGoal, buttonClass: 'btn-delete', loading: false }">
+          <div>
+            <h2>{{ goalToDisplay.name }}</h2>
+            <p>{{ get_category_name_by_id(goalToDisplay.categoryId) }}</p>
+            <p>${{ goalToDisplay.amount }}</p>
+            <p>Due to: {{ formatISODateToDateTime(goalToDisplay.date) }}</p>
 
+
+            <button @click="deleteGoal()" class="btn-delete">Delete</button>
+          </div>
+        </Modal>
       </div>
     </div>
 </template>
@@ -144,15 +157,6 @@ function get_categories_data() {
 
 }
 
-function delete_goal(id) {
-  axios.delete('http://localhost:3000/delete_goal', {params  : {
-    id: id
-  }})
-  .then(response => {
-    get_goals_data();
-  });
-}
-
 function get_category_name_by_id(id) {
   console.log(id);
   let elem = categories.value.find(category => category.id == id);
@@ -161,18 +165,75 @@ function get_category_name_by_id(id) {
   }
 }
 
+function delete_goal(id) {
+  axios.delete('http://localhost:3000/delete_goal', {params  : {
+      id: id
+    }})
+      .then(response => {
+        console.log(response)
+        get_goals_data();
+      });
+}
+
+function edit_goal() {
+  axios.put('http://localhost:3000/edit_goal', null, {params  : {
+      id: goalToDisplay.id,
+      category_id: goalToDisplay.categoryId,
+      name: goalToDisplay.name,
+      date: goalToDisplay.date,
+      amount: goalToDisplay.amount,
+      is_spend: goalToDisplay.isSpend
+    }})
+      .then(response => {
+        console.log(response)
+        get_goals_data();
+      });
+}
+
 function formatISODateToDateTime(isoDateString) {
   const dateTime = new Date(isoDateString);
-  return format(dateTime, 'dd-MM-yyyy HH:mm');
+  return format(dateTime, 'MMM d'); // Update the format string here
+}
+
+const goalToDisplay = ref({});
+const showGoalModal = ref(false);
+
+function openGoalModal(goal) {
+  goalToDisplay.value = { ...goal };
+  showGoalModal.value = true;
+}
+
+function closeGoalModal() {
+  showGoalModal.value = false;
+}
+
+
+function deleteGoal() {
+  delete_goal(goalToDisplay.value.id);
+  showGoalModal.value = false;
 }
 
 </script>
 
 <style>
 
-.card{
+.btn-delete {
+  background-color: #ff6961; /* Red color */
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.card {
   background: #E7E8EB;
-  border-radius: 20vw;
+  border-radius: 1.5rem;
   height: 25vh;
   width: 20vw;
   margin-left: 2vw;
