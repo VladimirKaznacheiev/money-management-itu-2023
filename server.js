@@ -42,6 +42,45 @@ app.get('/get_transactions', async (req, res) => {
       prisma.$disconnect();
 });
 
+app.put('/edit_transaction', async (req, res) => {
+    const prisma = new PrismaClient();
+    try {
+        const transactionId = parseInt(req.query.id, 10);
+
+        const existingTransaction = await prisma.Transaction.findUnique({
+            where: {
+                id: transactionId,
+            },
+        });
+
+        if (!existingTransaction) {
+            return res.status(404).json({ error: 'Transaction not found' });
+        }
+
+        // Update transaction fields based on the provided data
+        const updatedTransaction = await prisma.Transaction.update({
+            where: {
+                id: transactionId,
+            },
+            data: {
+                isIncome: req.query.is_income === 'true',
+                categoryId: parseInt(req.query.category_id, 10),
+                description: req.query.description,
+                date: new Date(req.query.date).toISOString(),
+                amount: parseInt(req.query.amount),
+            },
+        });
+
+        console.log('Updated transaction:', updatedTransaction);
+        res.status(200).json(updatedTransaction);
+    } catch (error) {
+        console.error('Error updating transaction:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    } finally {
+        prisma.$disconnect();
+    }
+});
+
 app.get('/get_transactions_piechart_data', async (req, res) => {
     const prisma = new PrismaClient();
     try {
@@ -116,7 +155,23 @@ try {
       prisma.$disconnect();
 });
 
-
+app.delete('/delete_category', async (req, res) => {
+    const prisma = new PrismaClient();
+    try {
+        const deletedCategory = await prisma.Category.delete({
+            where: {
+                id: parseInt(req.query.id, 10),
+            },
+        });
+        console.log('Deleted category:', deletedCategory);
+        // Respond with the created user
+        res.status(200).json(deletedCategory);
+    } catch (error) {
+        console.error('Error deleting a category:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+      prisma.$disconnect();
+});
 
 app.post('/add_transaction', async (req, res) => {
     const prisma = new PrismaClient();

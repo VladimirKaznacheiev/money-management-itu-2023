@@ -10,7 +10,7 @@
             <span class="material-symbols-outlined">add</span>
             Add new transaction
         </button>
-        <Modal name="m1" v-model:visible="show_add_transaction_modal" :modalClass="'custom-modal'" :title="'Add Transaction'" :maskClosable="false" :closable="false" :cancelButton="{text: 'cancel', onclick: () => {show_add_transaction_modal = !show_add_transaction_modal}, loading: false}" :okButton="{text: 'Add transaction +', onclick: () => {add_transaction();}, loading: false}">
+          <Modal name="m1" v-model:visible="show_add_transaction_modal" :modalClass="'custom-modal'" :title="editMode ? 'Edit Transaction' : 'Add Transaction'" :maskClosable="false" :closable="false" :cancelButton="{text: 'Cancel', onclick: () => { cancelEditTransaction() }, loading: false}" :okButton="{text: editMode ? 'Save Changes' : 'Add Transaction +', onclick: () => { editMode ? save_edited_transaction() : add_transaction() }, loading: false}">
             <div>
                 <div class="form-group">
                     <div class="display-type-buttons-transaction">
@@ -69,6 +69,9 @@
                                 <td>{{ formatISODateToDateTime(transaction.date) }}</td>
                                 <td>{{ transaction.amount }} $</td>
                                 <td>
+                                      <button @click="edit_transaction(transaction.id)  " style="background: none; border: none;">
+                                        <span class="material-symbols-outlined" style="font-size: 18px; margin-top: 5px; color: #71787E;">edit</span>
+                                      </button>
                                     <button @click="delete_transaction(transaction.id)" style="background: none; border: none;">
                                         <span class="material-symbols-outlined" style="font-size: 18px; color: #71787E;">delete</span>
                                     </button>
@@ -111,7 +114,9 @@ const transaction_is_income = ref(false);
 const transactions = ref([]);
 const categories = ref([]);
 const show_add_transaction_modal = ref(false);
-
+const editMode = ref(false);
+const chart = ref(null);
+const selectedTransactionId = ref(null);
 
 onMounted(() => {
   get_categories_data();
@@ -252,6 +257,44 @@ const paginatedTransactions = computed(() => {
     const end = start + itemsPerPage.value;
     return filteredTransactions.value.slice(start, end);
 });
+
+function edit_transaction(id) {
+  const selectedTransaction = transactions.value.find(transaction => transaction.id === id);
+
+  if (selectedTransaction) {
+    editMode.value = true;
+    show_add_transaction_modal.value = true;
+    selectedTransactionId.value = id; // Store the id
+    transaction_category_id.value = selectedTransaction.categoryId;
+    transaction_description.value = selectedTransaction.description;
+    transaction_date.value = selectedTransaction.date.slice(0, 10);
+    transaction_amount.value = selectedTransaction.amount;
+    transaction_is_income.value = selectedTransaction.isIncome;
+    show_add_transaction_modal.value = true;
+  }
+}
+
+function cancelEditTransaction() {
+  editMode.value = false;
+  show_add_transaction_modal.value = false;
+}
+
+function save_edited_transaction() {
+  editMode.value = false;
+  show_add_transaction_modal.value = false;
+  const id = selectedTransactionId.value; // Retrieve the stored id
+  axios.put('http://localhost:3000/edit_transaction', null, {params  : {
+      id: id,
+      category_id: transaction_category_id.value,
+      description: transaction_description.value,
+      date: transaction_date.value,
+      amount: transaction_amount.value,
+      is_income: transaction_is_income.value
+    }})
+      .then(response => {
+        get_transactions_data();
+      });
+}
 
 
 </script>
