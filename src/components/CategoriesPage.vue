@@ -18,7 +18,7 @@
                         <button type="button" :class="[transaction_is_income ? 'btn-display-type-selected-transaction' : 'btn-display-type-transaction']" @click="transaction_is_income = true">Income</button>
                     </div>
                 </div>
-                <div class="form-group">            
+                <div class="form-group">
                     <div class="input-group my-3">
                         <input type="text" class="form-control" v-model="category_name" placeholder="Input category name" />
                     </div>
@@ -32,10 +32,10 @@
                 </div>
             </div>
         </Modal>
-        <button type="button" style="display: flex; align-items: center; margin-left: auto;margin-right: auto; font-size: 16px;" class="btn btn-danger">
+          <button type="button" style="display: flex; align-items: center; margin-left: auto; margin-right: auto; font-size: 16px;" class="btn btn-danger" @click="deleteCategory">
             <span class="material-symbols-outlined">delete</span>Delete category
-        </button>
-    </div>  
+          </button>
+    </div>
         <div class="existing-categories">
             <div v-for="(category, index) in paginatedCategories" :key="index" class="existing-category">
                 <div class="icon-circleBIG" :class="{ 'selected': selectedCat === category.name }" @click="selectCat(category.name)">
@@ -53,7 +53,7 @@
             <button @click="nextPage" :disabled="currentPage === totalPages" style="background: none; border: none; font-size: 24px;">&gt;</button>
         </div>
 
-    
+
 
     </div>
 </template>
@@ -74,7 +74,7 @@
   border-radius: 50%;
   cursor: pointer;
   background-color: #fff;
-  border: 2px solid #007bff; 
+  border: 2px solid #007bff;
   transition: background-color 0.5s ease;
 
 }
@@ -190,10 +190,14 @@ const transaction_is_income = ref(false);
 function add_category() {
     show_add_category_modal.value = !show_add_category_modal.value;
     save_category_to_db();
+
+    category_name.value = '';
+    selectedIcon.value = icons[0];
+    transaction_is_income.value = false;
 }
 
 function save_category_to_db() {
-    axios.post('http://localhost:3000/add_category', null, {params  : { 
+    axios.post('http://localhost:3000/add_category', null, {params  : {
         name: category_name.value,
         icon_name: selectedIcon.value,
         is_income: transaction_is_income.value
@@ -249,9 +253,29 @@ const paginatedCategories = computed(() => {
 });
 
 
+function deleteCategory() {
+  if (!selectedCat.value) {
+    return;
+  }
 
+  const categoryId = categories.value.find(category => category.name === selectedCat.value)?.id;
 
+  if (!categoryId) {
+    return;
+  }
 
+  axios.delete(`http://localhost:3000/delete_category?id=${categoryId}`)
+      .then(response => {
+        console.log('Deleted category:', response.data);
+
+        selectedCat.value = null;
+
+        get_categories_data();
+      })
+      .catch(error => {
+        console.error('Error deleting a category:', error);
+      });
+}
 
 get_categories_data();
 

@@ -158,19 +158,27 @@ try {
 app.delete('/delete_category', async (req, res) => {
     const prisma = new PrismaClient();
     try {
-        const deletedCategory = await prisma.Category.delete({
+        // Find and delete transactions associated with the category
+        await prisma.Transaction.deleteMany({
+            where: {
+                categoryId: parseInt(req.query.id, 10),
+            },
+        });
+
+        // Delete the category
+        await prisma.Category.delete({
             where: {
                 id: parseInt(req.query.id, 10),
             },
         });
-        console.log('Deleted category:', deletedCategory);
-        // Respond with the created user
-        res.status(200).json(deletedCategory);
+
+        res.status(200).json({ message: 'Category and associated transactions deleted successfully' });
     } catch (error) {
         console.error('Error deleting a category:', error);
         res.status(500).json({ error: 'Internal Server Error' });
+    } finally {
+        prisma.$disconnect();
     }
-      prisma.$disconnect();
 });
 
 app.post('/add_transaction', async (req, res) => {
