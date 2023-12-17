@@ -33,6 +33,39 @@
           </div>
         </Modal>
       </div>
+      <div>
+        <div class="card">
+          <div class="card-content">
+            <div v-for="goal in goals" :key="goal.id">
+              <div class="card_small">
+                <div class="card-content">
+                  <h2 style="font-size: 25px; margin-left: -40px; margin-top: 5px; color: black;">
+                    {{ goal.name }}
+                  </h2>
+                  <p style="font-size: 20px; margin-left: -40px; margin-top: -5px; color: #71787E;">
+                    {{ get_category_name_by_id(goal.categoryId) }}
+                  </p>
+                  <p style="font-size: 20px; margin-left: -40px; margin-top: -6px; color: black;">
+                    ${{ goal.amount }}
+                  </p>
+                  <p style="font-size: 20px; margin-left: -40px; margin-top: -6px; color: black;">
+                    {{ formatISODateToDateTime(goal.date) }}
+                  </p>
+                  <div style="margin-top: 10px; margin-left: 160px; margin-right: 2px; display: flex;">
+                    <span @click="edit_goal(goal.id)" style="cursor: pointer; color: #71787E; margin-left: 10px; margin-top: 10px;">
+                     Edit
+                    </span>
+                    <span @click="delete_goal(goal.id)" style="cursor: pointer; color: red; margin-left: 20px; margin-top: 10px;">
+                     Delete
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
 </template>
 
@@ -58,9 +91,20 @@ const show_add_goal_modal = ref(false);
 const categories = ref([]);
 const goals = ref([]);
 
+const currentTime = ref(new Date());
+
 onMounted(() => {
   get_categories_data();
   get_goals_data();
+});
+
+const goalProgress = computed(() => {
+  return goals.value.map((goal) => {
+    const goalDate = new Date(goal.date);
+    const timeDiff = goalDate - currentTime.value;
+    const progress = Math.max(0, Math.min(100, (timeDiff / (goalDate - new Date())) * 100));
+    return { id: goal.id, progress };
+  });
 });
 
 function add_goal() {
@@ -123,3 +167,18 @@ function formatISODateToDateTime(isoDateString) {
 }
 
 </script>
+
+<style>
+
+.card{
+  background: #E7E8EB;
+  border-radius: 20vw;
+  height: 25vh;
+  width: 20vw;
+  margin-left: 2vw;
+  margin-top: 2vw;
+  text-align: left;
+  box-shadow: 1px 5px 10px lightgrey;
+}
+
+</style>
