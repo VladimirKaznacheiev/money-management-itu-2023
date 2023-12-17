@@ -32,43 +32,15 @@
             </div>
           </div>
         </Modal>
-      </div>
-      <div>
-        <div class="card" v-for="goal in goals" :key="goal.id" @click="openGoalModal(goal)">
-          <div class="card-content">
-            <div v-for="goal in goals" :key="goal.id">
-              <div class="card_small">
-                <div class="card-content">
-                  <div style="position: absolute; top: 25px; right: 35px; font-size: 18px; color: #71787E;">
-                    {{ goal_is_spend ? 'Spend' : 'Save' }}
-                  </div>
-                  <h2 style="font-size: 25px; margin-left: -40px; margin-top: 5px; color: black;">
-                    {{ goal.name }}
-                  </h2>
-                  <p style="font-size: 20px; margin-left: -40px; margin-top: -5px; color: #71787E;">
-                    {{ get_category_name_by_id(goal.categoryId) }}
-                  </p>
-                  <p style="font-size: 20px; margin-left: -40px; margin-top: -6px; color: black;">
-                    ${{ goal.amount }}
-                  </p>
-                  <div style=" bottom: 10px; right: 10px; margin-left: 140px; font-size: 18px; color: black;">
-                    Due to: {{ formatISODateToDateTime(currentTime) }}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
         <Modal
-            name="goalModal"
-            :visible="showGoalModal"
+            v-model:visible="showGoalModal"
             :modalClass="'custom-modal'"
             :title="'Goal Information'"
             :maskClosable="false"
             :closable="false"
             :cancelButton="{ text: 'Close', onclick: closeGoalModal, loading: false }"
             :okButton="{ text: 'Edit', onclick: editGoal, buttonClass: 'btn-delete', loading: false }">
-          <div>
+            <div>
             <h2>{{ goalToDisplay.name }}</h2>
             <p>{{ get_category_name_by_id(goalToDisplay.categoryId) }}</p>
             <p>${{ goalToDisplay.amount }}</p>
@@ -78,6 +50,35 @@
             <button @click="deleteGoal()" class="btn-delete">Delete</button>
           </div>
         </Modal>
+      </div>
+      <div class="goal-cards-container">
+        <div class="goal-card" v-for="goal in goals" :key="goal.id" @click="openGoalModal(goal)">
+          <div class="goal-card-content">
+
+            <p class="goal-card-content-header">
+              {{ goal.name }}
+            </p>
+            
+            <p class="goal-card-content-text" >
+              {{ goal.isSpend ? 'Spend' : 'Save' }} ${{ goal.amount }} on category: {{ get_category_name_by_id(goal.categoryId) }}
+            </p>
+            <p class="goal-card-content-text" style="font-weight: bold;">
+              123$ / {{goal.amount}}$
+            </p>
+
+            <div style="background: grey; height: 0.3vw; margin-right: 1.5vw; border-radius: 1vw;">
+              <div style="background: #00658b; height: 0.3vw; border-radius: 1vw;" :style="{width: Math.floor((123/ goal.amount)*100)+'%'}">
+
+</div>
+            </div>  
+            <br/>
+            <p class="goal-card-content-text" style="float: right; margin-right: 1vw;">
+              Due to: {{ formatISODateToDateTime(currentTime) }}
+            </p>
+          </div>
+            
+          </div>
+
       </div>
     </div>
 </template>
@@ -95,7 +96,7 @@ import {Modal} from "usemodal-vue3";
 import {format} from "date-fns";
 ChartJS.register(ArcElement, Tooltip, Legend)
 const sort = ref('');
-const goal_category_id = ref('');
+const goal_category_id = ref(0);
 const goal_name = ref('');
 const goal_date = ref(new Date().toISOString().substr(0, 10));
 const goal_amount = ref('');
@@ -199,7 +200,7 @@ const goalToDisplay = ref({});
 const showGoalModal = ref(false);
 
 function openGoalModal(goal) {
-  goalToDisplay.value = { ...goal };
+  goalToDisplay.value = goal;
   showGoalModal.value = true;
 }
 
@@ -231,15 +232,39 @@ function deleteGoal() {
   border-radius: 4px;
 }
 
-.card {
+.goal-card {
   background: #E7E8EB;
-  border-radius: 1.5rem;
-  height: 25vh;
-  width: 20vw;
+  border-radius: 1vw;
+  height: 20vh;
+  width: 18vw;
   margin-left: 2vw;
-  margin-top: 2vw;
+  margin-bottom: 2vw;
   text-align: left;
   box-shadow: 1px 5px 10px lightgrey;
 }
+
+.goal-cards-container{
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 2vw;
+
+}
+
+.goal-card-content{
+  margin-left: 1vw;
+  margin-top: 1vw;
+  /* font-size: 0.5vw; */
+}
+
+.goal-card-content-header{
+  font-size: 1vw;
+  font-weight: bold;
+}
+
+.goal-card-content-text{
+  font-size: 0.7vw;
+  margin-bottom: 0.5vw;
+}
+
 
 </style>
