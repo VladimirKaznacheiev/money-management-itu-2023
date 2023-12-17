@@ -24,7 +24,7 @@
                         <button type="button" :class="[category_is_income ? 'btn-display-type-selected-transaction' : 'btn-display-type-transaction']" @click="category_is_income = true">Income</button>
                     </div>
                 </div>
-                <div class="form-group">            
+                <div class="form-group">
                     <div class="input-group my-3">
                         <input type="text" class="form-control" v-model="category_name" placeholder="Input category name" />
                     </div>
@@ -41,7 +41,7 @@
             <button type="button" style="display: flex; align-items: center; margin-left: auto;margin-right: 20px; font-size: 16px;" class="btn btn-danger" @click="deleteCategory">
                 <span class="material-symbols-outlined">delete</span>Delete category
             </button>
-        </div>  
+        </div>
         <div class="existing-categories">
             <div v-for="(category, index) in paginatedCategories" :key="index" class="existing-category">
                 <div class="icon-circleBIG" :class="{ 'selected': selectedCat === category.name }" @click="selectCat(category.name)">
@@ -75,7 +75,7 @@
   border-radius: 50%;
   cursor: pointer;
   background-color: #fff;
-  border: 2px solid #007bff; 
+  border: 2px solid #007bff;
   transition: background-color 0.5s ease;
 
 }
@@ -84,8 +84,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 120px; 
-  height: 120px; 
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
   cursor: pointer;
   background-color: #fff;
@@ -93,7 +93,7 @@
   transition: background-color 0.5s ease;
 }
 .icon-circleBIG span {
-  font-size: 40px; 
+  font-size: 40px;
 }
 .icon-circleBIG.selected {
   background-color: #007bff;
@@ -119,12 +119,12 @@
 }
 
 .existing-category {
-  width: 18%; 
-  box-sizing: border-box; 
+  width: 18%;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 10px; 
+  margin-bottom: 10px;
 }
 
 .existing-category .icon-circle {
@@ -143,9 +143,9 @@
 }
 .category-name {
   text-align: center;
-  font-size: 16px; 
+  font-size: 16px;
   color: rgba(0, 0, 0, 0.7);
-  margin-top: 5px; 
+  margin-top: 5px;
 }
 .pagination {
     display: flex;
@@ -194,11 +194,11 @@ function add_category() {
 
     category_name.value = '';
     selectedIcon.value = icons[0];
-    transaction_is_income.value = false;
+      transaction_is_income.value = false;
 }
 
 function save_category_to_db() {
-    axios.post('http://localhost:3000/add_category', null, {params  : { 
+    axios.post('http://localhost:3000/add_category', null, {params  : {
         name: category_name.value,
         icon_name: selectedIcon.value,
         is_income: category_is_income.value

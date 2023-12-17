@@ -72,7 +72,7 @@
                                       <button @click="edit_transaction(transaction.id)  " style="background: none; border: none;">
                                         <span class="material-symbols-outlined" style="font-size: 18px; margin-top: 5px; color: #71787E;">edit</span>
                                       </button>
-                                    <button @click="delete_transaction(transaction.id)" style="background: none; border: none;">
+                                    <button @click="confirm_delete_transaction(transaction.id)" style="background: none; border: none;">
                                         <span class="material-symbols-outlined" style="font-size: 18px; color: #71787E;">delete</span>
                                     </button>
                                 </td>
@@ -161,6 +161,12 @@ function get_categories_data() {
         categories.value = response.data
     });
 
+}
+
+function confirm_delete_transaction(id) {
+  if (confirm('Are you sure you want to delete this transaction?')) {
+    delete_transaction(id);
+  }
 }
 
 function delete_transaction(id) {

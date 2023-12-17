@@ -81,66 +81,79 @@ app.put('/edit_transaction', async (req, res) => {
     }
 });
 
-app.get('/get_transactions_piechart_data', async (req, res) => {
+app.put('/edit_category', async (req, res) => {
     const prisma = new PrismaClient();
     try {
-        const transactions = await prisma.Transaction.findMany();
-        const categorySums = {};
-        const categoryIcons = [];
+        const categoryId = parseInt(req.query.id, 10);
 
-        const categories = await prisma.Category.findMany();
+        const existingCategory = await prisma.Category.findUnique({
+            where: {
+                id: categoryId,
+            },
+        });
 
-        // Transform the array of instances into a dictionary
-        const categoriesDict = categories.reduce((acc, instance) => {
-          acc[parseInt(instance.id, 10)] = {name: instance.name, icon: instance.iconName};
-          return acc;
-        }, {});
+        if (!existingCategory) {
+            return res.status(404).json({ error: 'Category not found' });
+        }
 
-        console.log(categoriesDict);
+        // Update category fields based on the provided data
+        const updatedCategory = await prisma.Category.update({
+            where: {
+                id: categoryId,
+            },
+            data: {
+                name: req.query.name,
+                iconName: req.query.icon_name,
+                isIncome: req.query.is_income === 'true',
+            },
+        });
 
-        let income_amount = 0;
-        let expense_amount = 0;
-
-        transactions.forEach(transaction => {
-            const { categoryId, amount, isIncome } = transaction;
-
-            if (isIncome == (req.query.is_income === 'true')) {
-            
-              const category = categoriesDict[String(categoryId)];
-
-              console.log(category);
-
-              
-              if (category.name in categorySums) {
-                categorySums[category.name] += amount;
-              } else {
-                categorySums[category.name] = amount;
-                categoryIcons.push(category.icon);
-              }
-            }
-
-            
-            if (isIncome) {
-                income_amount += amount;
-            }else{
-                expense_amount += amount;
-            }
-
-          });
-        const labels = Object.keys(categorySums);
-        const data = Object.values(categorySums);
-        const randomColors = Array.from({ length: labels.length }, () => getRandomColor());
-
-        const result = {labels: labels, datasets:[{data: data, backgroundColor: randomColors}], income_amount: income_amount, expense_amount: expense_amount, categoryIcons: categoryIcons};
-        console.log(result);
-        res.json(result);
+        console.log('Updated category:', updatedCategory);
+        res.status(200).json(updatedCategory);
     } catch (error) {
-        console.error('Error getting transactions:', error);
+        console.error('Error updating category:', error);
         res.status(500).json({ error: 'Internal Server Error' });
+    } finally {
+        prisma.$disconnect();
     }
-      prisma.$disconnect();
 });
 
+app.put('/edit_category/:id', async (req, res) => {
+    const prisma = new PrismaClient();
+    try {
+        const categoryId = parseInt(req.params.id, 10);
+
+        const existingCategory = await prisma.Category.findUnique({
+            where: {
+                id: categoryId,
+            },
+        });
+
+        if (!existingCategory) {
+            return res.status(404).json({ error: 'Category not found' });
+        }
+
+        // Update category fields based on the provided data
+        const updatedCategory = await prisma.Category.update({
+            where: {
+                id: categoryId,
+            },
+            data: {
+                name: req.body.name,
+                iconName: req.body.iconName,
+                isIncome: req.body.isIncome === 'true',
+            },
+        });
+
+        console.log('Updated category:', updatedCategory);
+        res.status(200).json(updatedCategory);
+    } catch (error) {
+        console.error('Error updating category:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    } finally {
+        prisma.$disconnect();
+    }
+});
 
 app.get('/get_categories', async (req, res) => {
     const prisma = new PrismaClient();
@@ -304,6 +317,8 @@ app.delete('/delete_goal', async (req, res) => {
       prisma.$disconnect();
 
 });
+
+
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
