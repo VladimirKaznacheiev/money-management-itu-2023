@@ -47,6 +47,14 @@ app.put('/edit_transaction', async (req, res) => {
     try {
         const transactionId = parseInt(req.query.id, 10);
 
+        if (!req.query.category_id || req.query.category_id.trim() === '' || req.query.category_id == 0) {
+            res.status(400).json({ error: 'Category cannot be empty' });
+        }
+
+        if (!req.query.amount || req.query.amount.trim() === '' || req.query.amount == 0) {
+            res.status(400).json({ error: 'Amount cannot be empty' });
+        }
+
         const existingTransaction = await prisma.Transaction.findUnique({
             where: {
                 id: transactionId,
@@ -297,6 +305,16 @@ app.post('/add_transaction', async (req, res) => {
     const prisma = new PrismaClient();
     try {
         const date = new Date(req.query.date);
+
+        if (!req.query.category_id || req.query.category_id.trim() === '' || req.query.category_id == 0) {
+            res.status(400).json({ error: 'Category cannot be empty' });
+        }
+
+        if (!req.query.amount || req.query.amount.trim() === '' || req.query.amount == 0) {
+            res.status(400).json({ error: 'Amount cannot be empty' });
+        }
+
+
 
 
         const newTransaction = await prisma.Transaction.create({

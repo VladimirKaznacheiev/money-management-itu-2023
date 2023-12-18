@@ -141,6 +141,13 @@ function save_transaction_to_db() {
     }})
     .then(response => {
         get_transactions_data();
+
+        transaction_category_id.value = 0;
+        transaction_description.value = '';
+        transaction_date.value = new Date().toISOString().slice(0,10);
+        transaction_amount.value = '';
+        transaction_is_income.value = false;
+        
     });
 }
 
