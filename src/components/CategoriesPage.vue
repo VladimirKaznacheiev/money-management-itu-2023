@@ -219,7 +219,7 @@ function save_category_to_db() {
         } else {
             alert('An error occurred: ' + error.message);
         }
-    })
+    });
 }
 
 function get_categories_data() {

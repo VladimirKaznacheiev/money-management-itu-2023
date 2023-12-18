@@ -148,6 +148,13 @@ function save_transaction_to_db() {
         transaction_amount.value = '';
         transaction_is_income.value = false;
         
+    }).catch(error => {
+
+        if (error.response && error.response.data && error.response.data.error) {
+            alert(error.response.data.error);
+        } else {
+            alert('An error occurred: ' + error.message);
+        }
     });
 }
 
@@ -306,7 +313,14 @@ function save_edited_transaction() {
     }})
       .then(response => {
         get_transactions_data();
-      });
+      }).catch(error => {
+
+            if (error.response && error.response.data && error.response.data.error) {
+                alert(error.response.data.error);
+            } else {
+                alert('An error occurred: ' + error.message);
+            }
+    });
 }
 
 
