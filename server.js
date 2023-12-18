@@ -340,25 +340,45 @@ app.delete('/delete_transaction', async (req, res) => {
 
 
 app.post('/add_category', async (req, res) => {
-    const prisma = new PrismaClient();
-    let isIncome = req.query.is_income === 'true';
-    try {
-        const newCategory = await prisma.Category.create({
-            data: {
-                name: req.query.name,
-                iconName: req.query.icon_name,
-                isIncome: isIncome,
-            },
-        });
-        console.log('Created new category:', newCategory);
-        // Respond with the created user
-        res.status(200).json(newCategory);
-    } catch (error) {
-        console.error('Error creating a new category:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
+  const prisma = new PrismaClient();
+  let isIncome = req.query.is_income === 'true';
+
+  // Check if the name is an empty string
+  if (!req.query.name || req.query.name.trim() === '') {
+      res.status(400).json({ error: 'Category name cannot be empty' });
+      return;
+  }
+
+  try {
+      // Check if a category with the same name already exists
+      const existingCategory = await prisma.Category.findFirst({
+          where: {
+              name: req.query.name,
+          },
+      });
+
+      if (existingCategory) {
+          res.status(400).json({ error: 'Category with the same name already exists' });
+          return;
+      }
+
+      const newCategory = await prisma.Category.create({
+          data: {
+              name: req.query.name,
+              iconName: req.query.icon_name,
+              isIncome: isIncome,
+          },
+      });
+
+      console.log('Created new category:', newCategory);
+      // Respond with the created user
+      res.status(200).json(newCategory);
+  } catch (error) {
+      console.error('Error creating a new category:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+  } finally {
       prisma.$disconnect();
-      
+  }
 });
 
 app.post('/add_goal', async (req, res) => {

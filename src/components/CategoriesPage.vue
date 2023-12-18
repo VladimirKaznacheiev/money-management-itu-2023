@@ -212,7 +212,14 @@ function save_category_to_db() {
     }})
     .then(response => {
         get_categories_data();
-    });
+    }).catch(error => {
+
+        if (error.response && error.response.data && error.response.data.error) {
+            alert(error.response.data.error);
+        } else {
+            alert('An error occurred: ' + error.message);
+        }
+    })
 }
 
 function get_categories_data() {

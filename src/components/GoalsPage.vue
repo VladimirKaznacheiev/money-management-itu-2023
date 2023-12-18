@@ -64,7 +64,7 @@
             :maskClosable="false"
             :closable="false"
             :cancelButton="{ text: 'Close', onclick: closeGoalEditModal, loading: false }"
-            :okButton="{ text: 'Edit', onclick: edit_goal, buttonClass: 'btn-delete', loading: false }">
+            :okButton="{ text: 'Save', onclick: edit_goal, buttonClass: 'btn-delete', loading: false }">
             <div>
               <div class="display-type-buttons-transaction">
                 <div class="display-type-buttons-container-transaction">
