@@ -15,8 +15,8 @@
                 <div class="form-group">
                     <div class="display-type-buttons-transaction">
                         <div class="display-type-buttons-container-transaction">
-                            <button type="button" :class="[!transaction_is_income ? 'btn-display-type-selected-transaction' : 'btn-display-type-transaction']" @click="transaction_is_income = false">Expense</button>
-                            <button type="button" :class="[transaction_is_income ? 'btn-display-type-selected-transaction' : 'btn-display-type-transaction']" @click="transaction_is_income = true">Income</button>
+                            <button type="button" :class="[!transaction_is_income ? 'btn-display-type-selected-transaction' : 'btn-display-type-transaction']" @click="transaction_is_income = false; transaction_category_id = 0">Expense</button>
+                            <button type="button" :class="[transaction_is_income ? 'btn-display-type-selected-transaction' : 'btn-display-type-transaction']" @click="transaction_is_income = true; transaction_category_id = 0">Income</button>
                         </div>
                     </div>
                     <br/>
