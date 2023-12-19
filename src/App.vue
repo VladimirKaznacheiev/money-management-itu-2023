@@ -1,7 +1,12 @@
+<!--
+    Název souboru: App.vue
+    Autory: Volodymyr Burylov (xburyl00), Volodymyr Kaznacheiev (xkazna01), Maksim Kalutski (xkalut00)
+    Datum vytvoření: 05/12/2023
+-->
+
+
 <template>
-
   <div>
-
     <div class="row" style="height: 100vh;">
      
       <div class="left_navbar" style="background-color: #E7E8EB; width: 15%;">
@@ -73,38 +78,6 @@ const menuWindowStates = ref({
 
 const currenyWindowState = ref(menuWindowStates.value.dashboard);
 
-
-// const route = useRoute();
-// const myRoute = ref(route)
-// const router = useRouter();
-
-
-// watch(() => {
-//   // if (route){
-//     myRoute.value = route
-//     console.log('Current Route:', myRoute);
-//     open_current_window();
-//   // }
-// })
-
-
-
-// function open_current_window() {
-//   console.log('Current Route:', myRoute.path);
-//   if (myRoute.path == "/dashboard") {
-//     currenyWindowState.value = menuWindowStates.value.dashboard;
-//   } else if (myRoute.path == "/transactions") {
-//     currenyWindowState.value = menuWindowStates.value.transactions;
-//   } else if (myRoute.path == "/goals") {
-//     currenyWindowState.value = menuWindowStates.value.goals;
-//   } else if (myRoute.path == "/categories") {
-//     currenyWindowState.value = menuWindowStates.value.categories;
-//   }
-// }
-
-// onMounted(() => {
-//   open_current_window();
-// });
 
 
 </script>

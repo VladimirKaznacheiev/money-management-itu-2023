@@ -1,3 +1,8 @@
+// Název souboru: server.js
+// Autor: Volodymyr Kaznacheiev (xkazna01) 
+// Datum vytvoření: 05/12/2023
+
+
 const express = require('express');
 const cors = require("cors");
 const app = express();

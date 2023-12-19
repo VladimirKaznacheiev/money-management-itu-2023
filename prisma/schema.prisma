@@ -1,5 +1,7 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+//    Název souboru: schema.prisma
+//    Autor: Maksim Kalutski (xkalut00) 
+//    Datum vytvoření: 05/12/2023
+
 
 generator client {
   provider = "prisma-client-js"

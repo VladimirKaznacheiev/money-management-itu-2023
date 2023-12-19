@@ -1,3 +1,10 @@
+<!--
+    Název souboru: CategoriesPage.vue
+    Autor: Volodymyr Burylov  (xburyl00) 
+    Datum vytvoření: 05/12/2023
+-->
+
+
 <template>
     <div class="container">
         <div>

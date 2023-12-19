@@ -1,3 +1,10 @@
+<!--
+    Název souboru: TransactionsPage.vue
+    Autor: Volodymyr Kaznacheiev   (xkazna01)
+    Datum vytvoření: 05/12/2023
+-->
+
+
 <template>
     <div>
         <h1 style="text-align: left; margin-left: 30px; margin-top: 30px; color: rgba(0,0,0,0.5);">
