@@ -49,10 +49,12 @@ app.put('/edit_transaction', async (req, res) => {
 
         if (!req.query.category_id || req.query.category_id.trim() === '' || req.query.category_id == 0) {
             res.status(400).json({ error: 'Category cannot be empty' });
+            return;
         }
 
         if (!req.query.amount || req.query.amount.trim() === '' || req.query.amount == 0) {
             res.status(400).json({ error: 'Amount cannot be empty' });
+            return;
         }
 
         const existingTransaction = await prisma.Transaction.findUnique({
@@ -191,6 +193,13 @@ app.get('/get_transactions_piechart_data', async (req, res) => {
 app.put('/edit_category', async (req, res) => {
     const prisma = new PrismaClient();
     try {
+
+          // Check if the name is an empty string
+        if (!req.query.name || req.query.name.trim() === '') {
+          res.status(400).json({ error: 'Category name cannot be empty' });
+          return;
+        }
+
         const categoryId = parseInt(req.query.id, 10);
 
         const existingCategory = await prisma.Category.findUnique({
@@ -308,10 +317,12 @@ app.post('/add_transaction', async (req, res) => {
 
         if (!req.query.category_id || req.query.category_id.trim() === '' || req.query.category_id == 0) {
             res.status(400).json({ error: 'Category cannot be empty' });
+            return;
         }
 
         if (!req.query.amount || req.query.amount.trim() === '' || req.query.amount == 0) {
             res.status(400).json({ error: 'Amount cannot be empty' });
+            return;
         }
 
 
