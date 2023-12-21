@@ -1,28 +1,22 @@
 # money-management-itu-2023
 
-## You should have npm and node installed !!!
+## Musíte mít nainstalované npm a node !!!
 
-## Vue.js project setup
+## Nastavení Vue.js projektu
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
+### Kompiluje FRONTEND pro produkci
 ```
 npm run build
 ```
 
-### Lints and fixes files
-```
-npm run lint
-```
 
-# Node.js server setup
+# Nastavení Node.js BACKEND serveru
 ```
 node server.js
 ```
+
+## Poznámka:
+Ujistěte se, že máte nainstalované nejnovější verze Vue, npm a node. Pro spuštění příkazu npm run build a node server.js použijte 2 různá terminálová okna.

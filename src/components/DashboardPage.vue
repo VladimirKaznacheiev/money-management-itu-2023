@@ -5,16 +5,6 @@
         </h1>
         
     </div>
-    <div style="display: flex; align-items: left; margin-top: 1.5vw;">
-        <div style="padding-top: 10px;">
-            <p style="text-align: left; color: rgba(0,0,0,0.5); margin-left: 60px; font-size: 16px;">
-                    Sort By:
-            </p>
-        </div>
-        <button type="button" class="btnsort" @click="setSort('Week')">Week</button>
-        <button type="button" class="btnsort" @click="setSort('Month')">Month</button>
-        <button type="button" class="btnsort" @click="setSort('Year')">Year</button>
-    </div>
 
     <div style="margin-top: 3vw;">
             <div class="row">
