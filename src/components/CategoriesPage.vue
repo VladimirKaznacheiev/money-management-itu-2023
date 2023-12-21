@@ -334,7 +334,14 @@ function update_category(id) {
     console.log('Updated category:', response.data);
     show_add_category_modal.value = false;
     get_categories_data();
-  });
+  }).catch(error => {
+
+        if (error.response && error.response.data && error.response.data.error) {
+            alert(error.response.data.error);
+        } else {
+            alert('An error occurred: ' + error.message);
+        }
+    });
 }
 
 get_categories_data();
