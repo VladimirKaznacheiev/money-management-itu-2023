@@ -94,6 +94,21 @@ app.put('/edit_transaction', async (req, res) => {
 app.put('/edit_goal', async (req, res) => {
     const prisma = new PrismaClient();
     try {
+
+        if (!req.query.category_id || req.query.category_id.trim() === '' || req.query.category_id == 0) {
+          res.status(400).json({ error: 'Category cannot be empty' });
+          return;
+        }
+
+        if (!req.query.amount || req.query.amount.trim() === '' || req.query.amount == 0) {
+            res.status(400).json({ error: 'Amount cannot be empty' });
+            return;
+        }
+
+        if (!req.query.name || req.query.name.trim() === '') {
+            res.status(400).json({ error: 'Name cannot be empty' });
+            return;
+        }
         const transactionId = parseInt(req.query.id, 10);
 
         const existingTransaction = await prisma.Goal.findUnique({
@@ -413,6 +428,22 @@ app.post('/add_category', async (req, res) => {
 app.post('/add_goal', async (req, res) => {
     const prisma = new PrismaClient();
     try {
+
+        if (!req.query.category_id || req.query.category_id.trim() === '' || req.query.category_id == 0) {
+            res.status(400).json({ error: 'Category cannot be empty' });
+            return;
+        }
+
+        if (!req.query.amount || req.query.amount.trim() === '' || req.query.amount == 0) {
+            res.status(400).json({ error: 'Amount cannot be empty' });
+            return;
+        }
+
+        if (!req.query.name || req.query.name.trim() === '') {
+            res.status(400).json({ error: 'Name cannot be empty' });
+            return;
+        }
+
         const date = new Date(req.query.date);
 
         const newGoal = await prisma.Goal.create({

@@ -208,6 +208,13 @@ function save_goal_to_db() {
     }})
     .then(response => {
         get_goals_data();
+    }).catch(error => {
+
+      if (error.response && error.response.data && error.response.data.error) {
+          alert(error.response.data.error);
+      } else {
+          alert('An error occurred: ' + error.message);
+      }
     });
 }
 
@@ -264,11 +271,18 @@ function edit_goal() {
       amount: goal_amount.value,
       is_spend: goal_is_spend.value
     }})
-      .then(response => {
-        console.log(response)
-        get_goals_data();
-        closeGoalEditModal();
-      });
+    .then(response => {
+      console.log(response)
+      get_goals_data();
+      closeGoalEditModal();
+    }).catch(error => {
+
+      if (error.response && error.response.data && error.response.data.error) {
+          alert(error.response.data.error);
+      } else {
+          alert('An error occurred: ' + error.message);
+      }
+    });
 }
 
 function formatISODateToDateTime(isoDateString) {
