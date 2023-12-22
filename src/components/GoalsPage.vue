@@ -14,7 +14,7 @@
           <span class="material-symbols-outlined">add</span>
           Add new goal
         </button>
-        <Modal name="m1" v-model:visible="show_add_goal_modal" :modalClass="'custom-modal'" :title="'Add Goal'" :maskClosable="false" :closable="false" :cancelButton="{text: 'cancel', onclick: () => {show_add_goal_modal = !show_add_goal_modal}, loading: false}" :okButton="{text: 'Add transaction +', onclick: () => {add_goal();}, loading: false}">
+        <Modal name="m1" v-model:visible="show_add_goal_modal" :modalClass="'custom-modal'" :title="'Add Goal'" :maskClosable="false" :closable="false" :cancelButton="{text: 'cancel', onclick: () => {show_add_goal_modal = !show_add_goal_modal}, loading: false}" :okButton="{text: 'Add Goal +', onclick: () => {add_goal();}, loading: false}">
           <div>
             <div class="display-type-buttons-transaction">
               <div class="display-type-buttons-container-transaction">
@@ -221,7 +221,7 @@ function save_goal_to_db() {
         goal_amount.value = '';
         goal_is_spend.value = true;
 
-        
+
     }).catch(error => {
 
       if (error.response && error.response.data && error.response.data.error) {
