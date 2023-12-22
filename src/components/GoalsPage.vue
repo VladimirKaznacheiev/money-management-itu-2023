@@ -214,6 +214,14 @@ function save_goal_to_db() {
     }})
     .then(response => {
         get_goals_data();
+
+        goal_category_id.value = 0;
+        goal_name.value = '';
+        goal_date.value = new Date().toISOString().substr(0, 10);
+        goal_amount.value = '';
+        goal_is_spend.value = true;
+
+        
     }).catch(error => {
 
       if (error.response && error.response.data && error.response.data.error) {
