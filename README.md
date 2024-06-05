@@ -1,22 +1,39 @@
-# money-management-itu-2023
+# FinanSync - Money Management
 
-## Musíte mít nainstalované npm a node !!!
+**FinanSync** is a finance management application designed to help you track your income and expenses. It uses Prisma
+Client for backend operations. The frontend uses Vue3, Axios, and Chart.js to provide a dynamic user interface that 
+includes real-time financial data visualization.
 
-## Nastavení Vue.js projektu
+## Authors
+
+Volodymyr Burylov\
+Volodymyr Kaznacheiev\
+Maksim Kalutski
+
+## Project setup
+
+You need to have Node.js installed on your machine.
+
+### 1. Install the dependencies by running:
+
 ```
 npm install
 ```
 
-### Kompiluje FRONTEND pro produkci
+### 2. To build the project and enable hot-reloading for development, run:
+
 ```
 npm run build
 ```
 
+### 3. Start the backend server by executing:
 
-# Nastavení Node.js BACKEND serveru
 ```
 node server.js
 ```
 
-## Poznámka:
-Ujistěte se, že máte nainstalované nejnovější verze Vue, npm a node. Pro spuštění příkazu npm run build a node server.js použijte 2 různá terminálová okna.
+### 4. Serve the frontend application using:
+
+```
+npm run serve
+```
