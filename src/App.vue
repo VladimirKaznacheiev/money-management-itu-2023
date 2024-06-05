@@ -1,73 +1,81 @@
 <!--
-    Název souboru: App.vue
-    Autory: Volodymyr Burylov (xburyl00), Volodymyr Kaznacheiev (xkazna01), Maksim Kalutski (xkalut00)
-    Datum vytvoření: 05/12/2023
+    File: App.vue
+    Authors: Volodymyr Burylov
+             Volodymyr Kaznacheiev,
+             Maksim Kalutski
+    Date: 05/12/2023
 -->
 
-
 <template>
-  <div>
-    <div class="row" style="height: 100vh;">
-     
-      <div class="left_navbar" style="background-color: #E7E8EB; width: 15%;">
-        <img class="mt-4" src="./assets/logo.png" alt="SVG Image" width="80%"/>
-        <div class="menu_buttons_block" style="margin-top: 5vw">
-
-        <div class="menu_button" @click="currenyWindowState = menuWindowStates.dashboard" :class="[currenyWindowState == menuWindowStates.dashboard ? 'selected_menu_button' : '']" >
+  <div class="app-container">
+    <div class="left_navbar">
+      <div class="logo_container">
+        <img class="logo" src="./assets/logo.png" alt="SVG Image"/>
+        <div class="app_name">FinanSync</div>
+      </div>
+      <div class="menu_buttons_block">
+        <div
+            class="menu_button"
+            @click="currenyWindowState = menuWindowStates.dashboard"
+            :class="{ selected_menu_button: currenyWindowState === menuWindowStates.dashboard }"
+        >
           <div class="menu_button_content">
-            <span class="material-symbols-outlined" style="font-size: 1.2vw">dashboard</span>
+            <span class="material-symbols-outlined">dashboard</span>
             <div class="menu_button_text">Dashboard</div>
           </div>
         </div>
-  
-        <div class="menu_button" @click="currenyWindowState = menuWindowStates.transactions" :class="[currenyWindowState == menuWindowStates.transactions ? 'selected_menu_button' : '']">
+
+        <div
+            class="menu_button"
+            @click="currenyWindowState = menuWindowStates.transactions"
+            :class="{ selected_menu_button: currenyWindowState === menuWindowStates.transactions }"
+        >
           <div class="menu_button_content">
-            <span class="material-symbols-outlined" style="font-size: 1.2vw;">attach_money</span>
+            <span class="material-symbols-outlined">attach_money</span>
             <div class="menu_button_text">Transactions</div>
           </div>
         </div>
-  
-        <div class="menu_button" @click="currenyWindowState = menuWindowStates.goals" :class="[currenyWindowState == menuWindowStates.goals ? 'selected_menu_button' : '']">
+
+        <div
+            class="menu_button"
+            @click="currenyWindowState = menuWindowStates.goals"
+            :class="{ selected_menu_button: currenyWindowState === menuWindowStates.goals }"
+        >
           <div class="menu_button_content">
-            <span class="material-symbols-outlined" style="font-size: 1.2vw;">flag </span>
+            <span class="material-symbols-outlined">flag</span>
             <div class="menu_button_text">Goals</div>
           </div>
         </div>
 
-        <div class="menu_button" @click="currenyWindowState = menuWindowStates.categories" :class="[currenyWindowState == menuWindowStates.categories ? 'selected_menu_button' : '']">
+        <div
+            class="menu_button"
+            @click="currenyWindowState = menuWindowStates.categories"
+            :class="{ selected_menu_button: currenyWindowState === menuWindowStates.categories }"
+        >
           <div class="menu_button_content">
-            <span class="material-symbols-outlined" style="font-size: 1.2vw;">shopping_basket</span>
+            <span class="material-symbols-outlined">shopping_basket</span>
             <div class="menu_button_text">Categories</div>
           </div>
         </div>
-  
-
       </div>
+    </div>
 
-     </div> 
-     <div style="width: 85%;">
-       <div class="col m-0">
-
-         <DashboardPage v-if="currenyWindowState == menuWindowStates.dashboard"/>
-         <TransactionsPage v-else-if="currenyWindowState == menuWindowStates.transactions"/>
-         <GoalsPage v-else-if="currenyWindowState == menuWindowStates.goals"/>
-         <CategoriesPage v-else-if="currenyWindowState == menuWindowStates.categories"/>
-       </div>
-     </div>
-   
+    <div class="content_area">
+      <DashboardPage v-if="currenyWindowState === menuWindowStates.dashboard"/>
+      <TransactionsPage v-else-if="currenyWindowState === menuWindowStates.transactions"/>
+      <GoalsPage v-else-if="currenyWindowState === menuWindowStates.goals"/>
+      <CategoriesPage v-else-if="currenyWindowState === menuWindowStates.categories"/>
     </div>
   </div>
 </template>
 
-<!-- <script src="sidebars.js"></script>     -->
-
 <script setup>
-import DashboardPage from './components/DashboardPage.vue'
-import TransactionsPage from './components/TransactionsPage.vue'
-import GoalsPage from './components/GoalsPage.vue'
-import CategoriesPage from './components/CategoriesPage.vue'
-// import { useRoute, useRouter } from "vue-router";
-import { ref, onMounted, watch  } from 'vue'
+import DashboardPage from './components/DashboardPage.vue';
+import TransactionsPage from './components/TransactionsPage.vue';
+import GoalsPage from './components/GoalsPage.vue';
+import CategoriesPage from './components/CategoriesPage.vue';
+import {ref, watch} from 'vue';
+import './styles/App.css';
 
 const menuWindowStates = ref({
   dashboard: 0,
@@ -78,49 +86,24 @@ const menuWindowStates = ref({
 
 const currenyWindowState = ref(menuWindowStates.value.dashboard);
 
+document.title = 'FinanSync - Dashboard';
 
-
+watch(currenyWindowState, (newState) => {
+  switch (newState) {
+    case menuWindowStates.value.dashboard:
+      document.title = 'FinanSync - Dashboard';
+      break;
+    case menuWindowStates.value.transactions:
+      document.title = 'FinanSync - Transactions';
+      break;
+    case menuWindowStates.value.goals:
+      document.title = 'FinanSync - Goals';
+      break;
+    case menuWindowStates.value.categories:
+      document.title = 'FinanSync - Categories';
+      break;
+    default:
+      document.title = 'FinanSync';
+  }
+});
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
-.menu_button {
-  width: 90%;
-  height: 3vw;
-  margin: 1vw;
-  padding: 1vw;
-  margin-bottom: 1.2vw;  
-  border-radius: 40px;
-  transition: background-color 0.5s ease;
-  display: flex;
-  cursor: pointer;
-}
-
-.menu_button:hover {
-  background-color: #d6eeff;
-}
-
-.selected_menu_button {
-  background-color: #C6E7FF;
-}
-
-
-.menu_button_text {
-  font-size: 0.8vw;
-  font-weight: bold;
-  margin-left: 0.8vw;
-}
-
-.menu_button_content {
-  display: flex;
-  width: 100%;
-
-}
-</style>
