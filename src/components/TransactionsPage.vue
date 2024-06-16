@@ -7,9 +7,6 @@
 -->
 
 <template>
-  <div>
-    <h1 class="title">Transactions</h1>
-  </div>
   <div class="add-transaction-button">
     <button class="btn btn-primary" type="submit" @click="show_add_transaction_modal = !show_add_transaction_modal">
       <span class="material-symbols-outlined">add</span>

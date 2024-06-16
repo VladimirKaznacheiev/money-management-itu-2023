@@ -6,7 +6,9 @@
   >
     <div class="menu_button_content">
       <span class="material-symbols-outlined">{{ icon }}</span>
-      <div class="menu_button_text">{{ text }}</div>
+      <transition name="fade">
+        <div v-if="!isCollapsed" class="menu_button_text">{{ text }}</div>
+      </transition>
     </div>
   </div>
 </template>
@@ -17,7 +19,8 @@ import { defineProps } from 'vue';
 const props = defineProps({
   icon: String,
   text: String,
-  isSelected: Boolean
+  isSelected: Boolean,
+  isCollapsed: Boolean
 });
 </script>
 
@@ -29,6 +32,7 @@ const props = defineProps({
   border-radius: 40px;
   transition: background-color 0.5s ease;
   display: flex;
+  align-items: center;
   cursor: pointer;
 }
 
@@ -48,8 +52,14 @@ const props = defineProps({
 
 .menu_button_content {
   display: flex;
-  width: 100%;
   align-items: center;
-  justify-content: center;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.1s;
+}
+
+.fade-enter, .fade-leave-to {
+  opacity: 0;
 }
 </style>

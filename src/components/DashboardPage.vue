@@ -7,12 +7,6 @@
 -->
 
 <template>
-  <div>
-    <h1 class="dashboard-title">
-      Dashboard
-    </h1>
-  </div>
-
   <div class="dashboard-content">
     <div class="row">
       <div class="col-sm">

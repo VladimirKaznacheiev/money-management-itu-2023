@@ -8,7 +8,6 @@
 
 <template>
   <div>
-    <h1 class="title">Goals</h1>
     <div class="add-goal-button">
       <button class="btn btn-primary" type="submit" @click="show_add_goal_modal = !show_add_goal_modal">
         <span class="material-symbols-outlined">add</span>
