@@ -1,81 +1,26 @@
-<!--
-    File: App.vue
-    Authors: Volodymyr Burylov
-             Volodymyr Kaznacheiev,
-             Maksim Kalutski
-    Date: 05/12/2023
--->
-
 <template>
   <div class="app-container">
-    <div class="left_navbar">
-      <div class="logo_container">
-        <img class="logo" src="./assets/logo.png" alt="SVG Image"/>
-        <div class="app_name">FinanSync</div>
+    <Navbar :currenyWindowState="currenyWindowState" @toggleSidebar="toggleSidebar" @updateState="updateState" />
+    <div class="main-content">
+      <Sidebar :currenyWindowState="currenyWindowState" :isCollapsed="isSidebarCollapsed" @update:state="updateState" />
+      <div class="content_area" :class="{ 'content_area_full': !isSidebarVisible }">
+        <DashboardPage v-if="currenyWindowState === menuWindowStates.dashboard" />
+        <TransactionsPage v-else-if="currenyWindowState === menuWindowStates.transactions" />
+        <GoalsPage v-else-if="currenyWindowState === menuWindowStates.goals" />
+        <CategoriesPage v-else-if="currenyWindowState === menuWindowStates.categories" />
       </div>
-      <div class="menu_buttons_block">
-        <div
-            class="menu_button"
-            @click="currenyWindowState = menuWindowStates.dashboard"
-            :class="{ selected_menu_button: currenyWindowState === menuWindowStates.dashboard }"
-        >
-          <div class="menu_button_content">
-            <span class="material-symbols-outlined">dashboard</span>
-            <div class="menu_button_text">Dashboard</div>
-          </div>
-        </div>
-
-        <div
-            class="menu_button"
-            @click="currenyWindowState = menuWindowStates.transactions"
-            :class="{ selected_menu_button: currenyWindowState === menuWindowStates.transactions }"
-        >
-          <div class="menu_button_content">
-            <span class="material-symbols-outlined">attach_money</span>
-            <div class="menu_button_text">Transactions</div>
-          </div>
-        </div>
-
-        <div
-            class="menu_button"
-            @click="currenyWindowState = menuWindowStates.goals"
-            :class="{ selected_menu_button: currenyWindowState === menuWindowStates.goals }"
-        >
-          <div class="menu_button_content">
-            <span class="material-symbols-outlined">flag</span>
-            <div class="menu_button_text">Goals</div>
-          </div>
-        </div>
-
-        <div
-            class="menu_button"
-            @click="currenyWindowState = menuWindowStates.categories"
-            :class="{ selected_menu_button: currenyWindowState === menuWindowStates.categories }"
-        >
-          <div class="menu_button_content">
-            <span class="material-symbols-outlined">shopping_basket</span>
-            <div class="menu_button_text">Categories</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="content_area">
-      <DashboardPage v-if="currenyWindowState === menuWindowStates.dashboard"/>
-      <TransactionsPage v-else-if="currenyWindowState === menuWindowStates.transactions"/>
-      <GoalsPage v-else-if="currenyWindowState === menuWindowStates.goals"/>
-      <CategoriesPage v-else-if="currenyWindowState === menuWindowStates.categories"/>
     </div>
   </div>
 </template>
 
 <script setup>
+import { ref, watch } from 'vue';
+import Navbar from './components/Navbar.vue';
+import Sidebar from './components/Sidebar.vue';
 import DashboardPage from './components/DashboardPage.vue';
 import TransactionsPage from './components/TransactionsPage.vue';
 import GoalsPage from './components/GoalsPage.vue';
 import CategoriesPage from './components/CategoriesPage.vue';
-import {ref, watch} from 'vue';
-import './styles/App.css';
 
 const menuWindowStates = ref({
   dashboard: 0,
@@ -85,8 +30,17 @@ const menuWindowStates = ref({
 });
 
 const currenyWindowState = ref(menuWindowStates.value.dashboard);
+const isSidebarVisible = ref(true);
+const isSidebarCollapsed = ref(false);
 
-document.title = 'FinanSync - Dashboard';
+const updateState = (state) => {
+  currenyWindowState.value = state;
+};
+
+const toggleSidebar = () => {
+  isSidebarVisible.value = !isSidebarVisible.value;
+  isSidebarCollapsed.value = !isSidebarCollapsed.value;
+};
 
 watch(currenyWindowState, (newState) => {
   switch (newState) {
@@ -107,3 +61,37 @@ watch(currenyWindowState, (newState) => {
   }
 });
 </script>
+
+<style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.main-content {
+  display: flex;
+  flex-direction: row;
+  margin-top: 77px; /* Adjust based on Navbar height */
+  height: calc(100vh - 77px);
+}
+
+.content_area {
+  flex-grow: 1;
+  padding: 1rem;
+  overflow-y: auto;
+  transition: width 0.3s;
+}
+
+.content_area_full {
+  width: 100%;
+}
+</style>

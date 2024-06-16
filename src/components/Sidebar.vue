@@ -1,0 +1,64 @@
+<template>
+  <div :class="['left_navbar', { collapsed: isCollapsed }]">
+    <div class="menu_buttons_block">
+      <MenuButton
+          v-for="(item, index) in menuItems"
+          :key="index"
+          :icon="item.icon"
+          :text="item.text"
+          :isSelected="currenyWindowState === item.state"
+          :isCollapsed="isCollapsed"
+          @click="updateState(item.state)"
+      />
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, defineProps, defineEmits } from 'vue';
+import MenuButton from '@/components/MenuButton.vue';
+
+const props = defineProps({
+  currenyWindowState: Number,
+  isCollapsed: Boolean,
+});
+
+const emit = defineEmits(['update:state', 'toggle-sidebar']);
+
+const menuWindowStates = ref({
+  dashboard: 0,
+  transactions: 1,
+  goals: 2,
+  categories: 3,
+});
+
+const menuItems = [
+  { icon: 'dashboard', text: 'Dashboard', state: menuWindowStates.value.dashboard },
+  { icon: 'attach_money', text: 'Transactions', state: menuWindowStates.value.transactions },
+  { icon: 'flag', text: 'Goals', state: menuWindowStates.value.goals },
+  { icon: 'shopping_basket', text: 'Categories', state: menuWindowStates.value.categories },
+];
+
+const updateState = (state) => {
+  emit('update:state', state);
+};
+</script>
+
+<style scoped>
+.left_navbar {
+  background-color: #e7e8eb;
+  width: 250px;
+  padding: 1.5rem 1rem 0 1rem;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s;
+}
+
+.left_navbar.collapsed {
+  width: 95px;
+}
+
+.menu_buttons_block {
+  width: 100%;
+}
+</style>

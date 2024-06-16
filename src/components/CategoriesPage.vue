@@ -89,9 +89,8 @@
 
 <script setup>
 import axios from 'axios';
-import { Modal } from 'usemodal-vue3';
-import { ref, computed } from 'vue';
-import '../styles/CategoriesPage.css';
+import {Modal} from 'usemodal-vue3';
+import {ref, computed} from 'vue';
 
 const category_name = ref('');
 const categories = ref([]);
@@ -256,3 +255,154 @@ function update_category(id) {
 
 get_categories_data();
 </script>
+
+<style scoped>
+.title {
+  text-align: left;
+  margin-left: 30px;
+  margin-top: 30px;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.display-type-buttons {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.display-type-buttons-container {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-display-type {
+  font-size: 18px;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.5s ease;
+}
+
+.btn-display-type-selected {
+  background-color: #C6E7FF;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.add-btn {
+  display: flex;
+  align-items: center;
+  margin-left: 20px;
+  font-size: 16px;
+}
+
+.delete-btn {
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+  font-size: 16px;
+}
+
+.icon-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.icon-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  background-color: #fff;
+  border: 2px solid #007bff;
+  transition: background-color 0.5s ease;
+}
+
+.icon-circle.selected {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.icon-circleBIG {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  cursor: pointer;
+  background-color: #fff;
+  border: 2px solid #007bff;
+  transition: background-color 0.5s ease;
+}
+
+.icon-circleBIG.selected {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.icon-circleBIG span {
+  font-size: 40px;
+}
+
+.existing-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.existing-category {
+  width: 18%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.category-name {
+  text-align: center;
+  font-size: 16px;
+  color: rgba(0, 0, 0, 0.7);
+  margin-top: 5px;
+}
+
+.edit-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #71787E;
+}
+
+.pagination {
+  display: flex;
+  float: right;
+  justify-content: center;
+  margin-bottom: 1vw;
+  margin-right: 3vw;
+}
+
+.pagination_text {
+  margin-right: 10px;
+  margin-top: 15px;
+  font-size: 16px;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.page-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+}
+</style>

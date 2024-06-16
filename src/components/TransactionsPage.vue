@@ -7,9 +7,6 @@
 -->
 
 <template>
-  <div>
-    <h1 class="title">Transactions</h1>
-  </div>
   <div class="add-transaction-button">
     <button class="btn btn-primary" type="submit" @click="show_add_transaction_modal = !show_add_transaction_modal">
       <span class="material-symbols-outlined">add</span>
@@ -110,7 +107,6 @@ import axios from 'axios';
 import {ref, computed, onMounted} from 'vue';
 import {Modal} from 'usemodal-vue3';
 import {format} from 'date-fns';
-import '../styles/TransactionsPage.css';
 
 const sort = ref('');
 const transaction_category_id = ref(0);
@@ -318,3 +314,99 @@ function save_edited_transaction() {
   });
 }
 </script>
+
+<style scoped>
+.title {
+  text-align: left;
+  margin-left: 30px;
+  margin-top: 30px;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.add-transaction-button {
+  display: flex;
+  align-items: left;
+  margin-top: 1.5vw;
+}
+
+.add-transaction-button .btn {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  margin-right: 40px;
+  font-size: 16px;
+}
+
+.display-type-buttons-transaction {
+  display: flex;
+  justify-content: center;
+}
+
+.display-type-buttons-container-transaction {
+  background-color: #edeef2;
+  border-radius: 20px;
+}
+
+.btn-display-type-transaction {
+  background-color: #edeef2;
+  border: none;
+  width: 200px;
+  padding: 10px;
+  border-radius: 20px;
+  height: 40px;
+  font-weight: normal;
+  font-size: 15px;
+  transition: background-color 0.5s ease;
+}
+
+.btn-display-type-transaction:hover {
+  background-color: #e0e1e6;
+}
+
+.btn-display-type-selected-transaction {
+  background-color: #C6E7FF;
+  border: none;
+  width: 200px;
+  padding: 10px;
+  border-radius: 20px;
+  height: 40px;
+  font-weight: normal;
+  font-size: 15px;
+}
+
+.transaction-table-container {
+  margin-left: 30px;
+  margin-top: 20px;
+}
+
+.btn-edit, .btn-delete {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.pagination {
+  display: flex;
+  float: right;
+  justify-content: center;
+  margin-bottom: 1vw;
+  margin-right: 3vw;
+}
+
+.pagination_text {
+  margin-right: 10px;
+  margin-top: 15px;
+  font-size: 16px;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.pagination-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+}
+
+.custom-modal {
+  border-radius: 50%;
+}
+</style>
