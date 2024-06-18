@@ -16,7 +16,7 @@
 
 <script setup>
 import { ref, defineProps, defineEmits } from 'vue';
-import MenuButton from '@/components/MenuButton.vue';
+import MenuButton from '@/components/ui/MenuButton.vue';
 
 const props = defineProps({
   currenyWindowState: Number,
@@ -46,12 +46,18 @@ const updateState = (state) => {
 
 <style scoped>
 .left_navbar {
-  background-color: #e7e8eb;
-  width: 250px;
+  background-color: #fff;
+  width: 300px;
   padding: 1.5rem 1rem 0 1rem;
   display: flex;
   flex-direction: column;
   transition: width 0.3s;
+  position: fixed; /* Ensure the sidebar is fixed */
+  top: 80px; /* Adjust this to the height of the navbar */
+  bottom: 0;
+  left: 0;
+  overflow-y: auto;
+  z-index: 1; /* Ensure the sidebar is below the navbar */
 }
 
 .left_navbar.collapsed {
@@ -62,3 +68,4 @@ const updateState = (state) => {
   width: 100%;
 }
 </style>
+
