@@ -1,57 +1,68 @@
-<!--
-    Name: components/TransactionsPage.vue
-    Authors: Volodymyr Burylov
-             Volodymyr Kaznacheiev
-             Maksim Kalutski
-    Date: 05/12/2023
--->
-
 <template>
-  <div class="add-transaction-button">
-    <button class="btn btn-primary" type="submit" @click="show_add_transaction_modal = !show_add_transaction_modal">
-      <span class="material-symbols-outlined">add</span>
-      Add new transaction
-    </button>
-    <Modal name="m1" v-model:visible="show_add_transaction_modal" :modalClass="'custom-modal'"
-           :title="editMode ? 'Edit Transaction' : 'Add Transaction'" :maskClosable="false" :closable="false"
-           :cancelButton="{text: 'Cancel', onclick: () => { cancelEditTransaction() }, loading: false}"
-           :okButton="{text: editMode ? 'Save Changes' : 'Add Transaction +', onclick: () => { editMode ? save_edited_transaction() : add_transaction() }, loading: false}">
-      <div>
-        <div class="form-group">
-          <div class="display-type-buttons-transaction">
-            <div class="display-type-buttons-container-transaction">
-              <button type="button"
-                      :class="[!transaction_is_income ? 'btn-display-type-selected-transaction' : 'btn-display-type-transaction']"
-                      @click="transaction_is_income = false; transaction_category_id = 0">Expense
-              </button>
-              <button type="button"
-                      :class="[transaction_is_income ? 'btn-display-type-selected-transaction' : 'btn-display-type-transaction']"
-                      @click="transaction_is_income = true; transaction_category_id = 0">Income
-              </button>
+  <div class="button-container">
+    <div class="filter-container">
+      <label for="sort">Sort by:</label>
+      <select id="sort" v-model="sort" @change="setSort(sort)">
+        <option value="">None</option>
+        <option value="Week">This Week</option>
+        <option value="Month">This Month</option>
+        <option value="Year">This Year</option>
+        <option value="Custom">Custom Period</option>
+      </select>
+      <div v-if="sort === 'Custom'" class="custom-date-range">
+        <label for="startDate">From:</label>
+        <input type="date" id="startDate" v-model="customStartDate">
+        <label for="endDate">To:</label>
+        <input type="date" id="endDate" v-model="customEndDate">
+        <button @click="applyCustomDateRange">Apply</button>
+      </div>
+    </div>
+    <div class="add-transaction-button">
+      <button class="btn btn-primary" type="submit" @click="show_add_transaction_modal = !show_add_transaction_modal">
+        <span class="material-symbols-outlined">add</span>
+        Add new transaction
+      </button>
+      <Modal name="m1" v-model:visible="show_add_transaction_modal" :modalClass="'custom-modal'"
+             :title="editMode ? 'Edit Transaction' : 'Add Transaction'" :maskClosable="false" :closable="false"
+             :cancelButton="{text: 'Cancel', onclick: () => { cancelEditTransaction() }, loading: false}"
+             :okButton="{text: editMode ? 'Save Changes' : 'Add Transaction +', onclick: () => { editMode ? save_edited_transaction() : add_transaction() }, loading: false}">
+        <div>
+          <div class="form-group">
+            <div class="display-type-buttons-transaction">
+              <div class="display-type-buttons-container-transaction">
+                <button type="button"
+                        :class="[!transaction_is_income ? 'btn-display-type-selected-transaction' : 'btn-display-type-transaction']"
+                        @click="transaction_is_income = false; transaction_category_id = 0">Expense
+                </button>
+                <button type="button"
+                        :class="[transaction_is_income ? 'btn-display-type-selected-transaction' : 'btn-display-type-transaction']"
+                        @click="transaction_is_income = true; transaction_category_id = 0">Income
+                </button>
+              </div>
+            </div>
+            <br/>
+            <select class="form-select" aria-label="Select transaction" v-model="transaction_category_id">
+              <option :value="0" selected>Select transaction category</option>
+              <option v-if="transaction_is_income" v-for="category in categories.filter(property => property.isIncome)"
+                      :value="category.id">{{ category.name }}
+              </option>
+              <option v-if="!transaction_is_income" v-for="category in categories.filter(property => !property.isIncome)"
+                      :value="category.id">{{ category.name }}
+              </option>
+            </select>
+            <div class="input-group my-3">
+              <input type="text" class="form-control" v-model="transaction_description" placeholder="Input description"/>
+            </div>
+            <div class="input-group my-3">
+              <input type="date" class="form-control" v-model="transaction_date" placeholder="Transaction date"/>
+            </div>
+            <div class="input-group my-3">
+              <input type="number" class="form-control" v-model="transaction_amount" placeholder="Input amount $"/>
             </div>
           </div>
-          <br/>
-          <select class="form-select" aria-label="Select transaction" v-model="transaction_category_id">
-            <option :value="0" selected>Select transaction category</option>
-            <option v-if="transaction_is_income" v-for="category in categories.filter(property => property.isIncome)"
-                    :value="category.id">{{ category.name }}
-            </option>
-            <option v-if="!transaction_is_income" v-for="category in categories.filter(property => !property.isIncome)"
-                    :value="category.id">{{ category.name }}
-            </option>
-          </select>
-          <div class="input-group my-3">
-            <input type="text" class="form-control" v-model="transaction_description" placeholder="Input description"/>
-          </div>
-          <div class="input-group my-3">
-            <input type="date" class="form-control" v-model="transaction_date" placeholder="Transaction date"/>
-          </div>
-          <div class="input-group my-3">
-            <input type="number" class="form-control" v-model="transaction_amount" placeholder="Input amount $"/>
-          </div>
         </div>
-      </div>
-    </Modal>
+      </Modal>
+    </div>
   </div>
   <div class="transaction-table-container">
     <div class="row">
@@ -109,6 +120,8 @@ import {Modal} from 'usemodal-vue3';
 import {format} from 'date-fns';
 
 const sort = ref('');
+const customStartDate = ref('');
+const customEndDate = ref('');
 const transaction_category_id = ref(0);
 const transaction_description = ref('');
 const transaction_date = ref(new Date().toISOString().slice(0, 10));
@@ -204,6 +217,14 @@ function setSort(value) {
   sort.value = value;
 }
 
+function applyCustomDateRange() {
+  if (customStartDate.value && customEndDate.value) {
+    const startDate = new Date(customStartDate.value);
+    const endDate = new Date(customEndDate.value);
+    filteredTransactions.value = filterTransactionsByDateRange(transactions.value, startDate, endDate);
+  }
+}
+
 const filteredTransactions = computed(() => {
   switch (sort.value) {
     case 'Week':
@@ -212,10 +233,14 @@ const filteredTransactions = computed(() => {
       return filterTransactionsByMonth(transactions.value);
     case 'Year':
       return filterTransactionsByYear(transactions.value);
+    case 'Custom':
+      return customFilteredTransactions.value;
     default:
       return transactions.value;
   }
 });
+
+const customFilteredTransactions = ref([]);
 
 function filterTransactionsByWeek(transactions) {
   const now = new Date();
@@ -241,6 +266,13 @@ function filterTransactionsByYear(transactions) {
   return transactions.filter(transaction => {
     const transactionDate = new Date(transaction.date);
     return transactionDate >= oneYearAgo && transactionDate <= now;
+  });
+}
+
+function filterTransactionsByDateRange(transactions, startDate, endDate) {
+  return transactions.filter(transaction => {
+    const transactionDate = new Date(transaction.date);
+    return transactionDate >= startDate && transactionDate <= endDate;
   });
 }
 
@@ -323,17 +355,20 @@ function save_edited_transaction() {
   color: rgba(0, 0, 0, 0.5);
 }
 
-.add-transaction-button {
+.button-container {
   display: flex;
-  align-items: left;
+  align-items: center;
   margin-top: 1.5vw;
+}
+
+.add-transaction-button {
+  margin-left: auto;
+  margin-right: 40px;
 }
 
 .add-transaction-button .btn {
   display: flex;
   align-items: center;
-  margin-left: auto;
-  margin-right: 40px;
   font-size: 16px;
 }
 
@@ -377,6 +412,26 @@ function save_edited_transaction() {
 .transaction-table-container {
   margin-left: 30px;
   margin-top: 20px;
+}
+
+.filter-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.custom-date-range {
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+}
+
+.custom-date-range label {
+  margin: 0 5px;
+}
+
+.custom-date-range button {
+  margin-left: 5px;
 }
 
 .btn-edit, .btn-delete {
