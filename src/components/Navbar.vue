@@ -70,7 +70,7 @@ const goToDashboard = () => {
   align-items: center;
   background-color: #fff;
   padding: 1rem;
-  z-index: 999;
+  z-index: 1000; /* Ensure the navbar is above the sidebar */
 }
 
 .hamburger {

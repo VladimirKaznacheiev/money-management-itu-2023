@@ -31,7 +31,6 @@ function changeDashboardPage(new_value) {
 .container {
   display: flex;
   justify-content: center;
-  margin-top: 20px;
 }
 
 .tabs {
@@ -87,9 +86,26 @@ function changeDashboardPage(new_value) {
   transition: 0.25s ease-out;
 }
 
-@media (max-width: 700px) {
-  .tabs {
-    transform: scale(0.8);
+@media (max-width: 768px) {
+  .tab {
+    font-size: 0.8rem;
+    height: 30px;
+    width: 150px;
   }
+
+  .glider {
+    height: 30px;
+    width: 150px;
+  }
+
+  .container input[id="radio-expenses"]:checked ~ .glider {
+    transform: translateX(0);
+  }
+
+  .container input[id="radio-incomes"]:checked ~ .glider {
+    transform: translateX(150px);
+  }
+
 }
+
 </style>

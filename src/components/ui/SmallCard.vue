@@ -34,38 +34,42 @@ const props = defineProps({
 
 <style scoped>
 .card-small {
-  background: #E7E8EB;
-  border-radius: 2vw;
-  height: 12vh;
-  margin-left: 3vw;
-  margin-right: 3vw;
+  background: #e8e8e8;
+  border-radius: 1.5vw;
   text-align: left;
-  box-shadow: 0px 5px 10px lightgrey;
+  box-shadow: 0px 8px 16px 0px rgb(0 0 0 / 3%);
+  margin-bottom: 1rem;
 }
 
 .card-content {
-  margin-left: 2vw;
-  padding-top: 0.5vw;
-  padding-bottom: 0.5vw;
+  padding: 1.5vw;
 }
 
 .amount-income {
   color: #5864d3;
-  font-size: 2.2vw;
-}
-
-.label-income {
-  font-size: 1vw;
-  margin-top: -0.5vw;
+  font-size: 2vw;
 }
 
 .amount-expense {
   color: #da7171;
-  font-size: 2.2vw;
+  font-size: 2vw;
 }
 
+.label-income,
 .label-expense {
   font-size: 1vw;
-  margin-top: -0.5vw;
+}
+
+@media (max-width: 768px) {
+  .amount-income,
+  .amount-expense {
+    font-size: 4vw;
+  }
+
+  .label-income,
+  .label-expense {
+    font-size: 2vw;
+  }
 }
 </style>
+

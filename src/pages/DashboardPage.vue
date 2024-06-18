@@ -17,7 +17,9 @@
 
     <div>
       <BigCard>
-        <DisplayTypeButtons :isIncomePage="isIncomePage" @changeDashboardPage="changeDashboardPage" />
+        <div class="display-type-buttons-container">
+          <DisplayTypeButtons :isIncomePage="isIncomePage" @changeDashboardPage="changeDashboardPage" />
+        </div>
         <ChartDataList :pieData="pie_data" :isIncomePage="isIncomePage" />
       </BigCard>
     </div>
@@ -62,4 +64,15 @@ function get_transactions_piechart_data(isIncome) {
 </script>
 
 <style scoped>
+.dashboard-content .row {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .dashboard-content .row {
+    flex-direction: column;
+  }
+}
 </style>

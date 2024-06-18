@@ -52,6 +52,12 @@ const updateState = (state) => {
   display: flex;
   flex-direction: column;
   transition: width 0.3s;
+  position: fixed; /* Ensure the sidebar is fixed */
+  top: 80px; /* Adjust this to the height of the navbar */
+  bottom: 0;
+  left: 0;
+  overflow-y: auto;
+  z-index: 1; /* Ensure the sidebar is below the navbar */
 }
 
 .left_navbar.collapsed {
@@ -62,3 +68,4 @@ const updateState = (state) => {
   width: 100%;
 }
 </style>
+

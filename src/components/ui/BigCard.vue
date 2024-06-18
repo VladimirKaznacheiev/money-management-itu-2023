@@ -11,18 +11,26 @@
 
 <style scoped>
 .card-big {
-  background: #E7E8EB;
-  border-radius: 2vw;
-  height: 70vh;
+  background: #e8e8e8;
+  border-radius: 1.5vw;
   margin-top: 2vw;
-  margin-left: 3vw;
-  margin-right: 3vw;
   text-align: left;
+  box-shadow: 0px 8px 16px 0px rgb(0 0 0 / 3%);
+  width: 100%;
 }
 
 .card-content {
-  margin-left: 2vw;
-  padding-top: 0.5vw;
-  padding-bottom: 0.5vw;
+  padding: 1.5vw;
+}
+
+@media (max-width: 768px) {
+  .card-big {
+    margin-top: 4vw;
+  }
+
+  .card-content {
+    padding: 3vw;
+  }
 }
 </style>
+
