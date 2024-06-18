@@ -68,7 +68,7 @@ const goToDashboard = () => {
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  background-color: #e7e8eb;
+  background-color: #fff;
   padding: 1rem;
   z-index: 999;
 }
@@ -77,15 +77,25 @@ const goToDashboard = () => {
   display: flex;
   align-items: center;
   cursor: pointer;
-  padding-left: 0.8rem;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: background-color 0.5s ease;
+}
+
+.hamburger:hover {
+  background-color: #f5f5f5;
+  border-radius: 50%;
+}
+
+.hamburger:active {
+  background-color: #e6e6e6;
 }
 
 .navbar-logo {
   display: flex;
   align-items: center;
-  padding-left: 3rem;
+  padding-left: 2rem;
   cursor: pointer;
-
 }
 
 .navbar-logo img {
@@ -101,5 +111,11 @@ const goToDashboard = () => {
 .page-title {
   font-size: 1.5rem;
   padding-left: 2rem;
+}
+
+@media (max-width: 768px) {
+  .app-name {
+    display: none;
+  }
 }
 </style>

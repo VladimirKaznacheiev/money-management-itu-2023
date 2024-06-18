@@ -16,7 +16,7 @@
 
 <script setup>
 import { ref, defineProps, defineEmits } from 'vue';
-import MenuButton from '@/components/MenuButton.vue';
+import MenuButton from '@/components/ui/MenuButton.vue';
 
 const props = defineProps({
   currenyWindowState: Number,
@@ -46,8 +46,8 @@ const updateState = (state) => {
 
 <style scoped>
 .left_navbar {
-  background-color: #e7e8eb;
-  width: 250px;
+  background-color: #fff;
+  width: 300px;
   padding: 1.5rem 1rem 0 1rem;
   display: flex;
   flex-direction: column;

@@ -14,13 +14,13 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import Navbar from './components/Navbar.vue';
 import Sidebar from './components/Sidebar.vue';
-import DashboardPage from './components/DashboardPage.vue';
-import TransactionsPage from './components/TransactionsPage.vue';
-import GoalsPage from './components/GoalsPage.vue';
-import CategoriesPage from './components/CategoriesPage.vue';
+import DashboardPage from '@/pages/DashboardPage.vue';
+import TransactionsPage from '@/pages/TransactionsPage.vue';
+import GoalsPage from '@/pages/GoalsPage.vue';
+import CategoriesPage from '@/pages/CategoriesPage.vue';
 
 const menuWindowStates = ref({
   dashboard: 0,
@@ -60,11 +60,28 @@ watch(currenyWindowState, (newState) => {
       document.title = 'FinanSync';
   }
 });
+
+const handleResize = () => {
+  if (window.innerWidth < 768) {
+    isSidebarCollapsed.value = true;
+  } else {
+    isSidebarCollapsed.value = false;
+  }
+};
+
+onMounted(() => {
+  handleResize();
+  window.addEventListener('resize', handleResize);
+});
+
+watch(isSidebarCollapsed, (newVal) => {
+  isSidebarVisible.value = !newVal;
+});
 </script>
 
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Google Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
@@ -80,7 +97,7 @@ watch(currenyWindowState, (newState) => {
 .main-content {
   display: flex;
   flex-direction: row;
-  margin-top: 77px; /* Adjust based on Navbar height */
+  margin-top: 77px;
   height: calc(100vh - 77px);
 }
 
