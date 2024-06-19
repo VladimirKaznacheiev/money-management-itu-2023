@@ -65,7 +65,7 @@ import axios from 'axios';
 import { ref, computed, onMounted } from 'vue';
 import { Modal } from 'usemodal-vue3';
 import { format } from 'date-fns';
-import AddTransactionButton from '@/components/ui/AddTransactionButton.vue';
+import AddTransactionButton from '@/components/ui/AddButton.vue';
 import SortComponent from '@/components/SortComponent.vue';
 import TransactionsTable from '@/components/TransactionsTable.vue';
 import Pagination from '@/components/Pagination.vue';

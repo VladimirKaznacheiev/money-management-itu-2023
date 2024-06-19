@@ -70,7 +70,7 @@ const goToDashboard = () => {
   align-items: center;
   background-color: #fff;
   padding: 1rem;
-  z-index: 1000; /* Ensure the navbar is above the sidebar */
+  z-index: 1000;
 }
 
 .hamburger {
@@ -111,6 +111,7 @@ const goToDashboard = () => {
 .page-title {
   font-size: 1.5rem;
   padding-left: 2rem;
+  text-align: left;
 }
 
 @media (max-width: 768px) {
