@@ -1,127 +1,77 @@
 <template>
-  <div class="button-container">
-    <div class="filter-container">
-      <label for="sort">Sort by:</label>
-      <select id="sort" v-model="sort" @change="setSort(sort)">
-        <option value="">None</option>
-        <option value="Week">This Week</option>
-        <option value="Month">This Month</option>
-        <option value="Year">This Year</option>
-        <option value="Custom">Custom Period</option>
-      </select>
-      <div v-if="sort === 'Custom'" class="custom-date-range">
-        <label for="startDate">From:</label>
-        <input type="date" id="startDate" v-model="customStartDate">
-        <label for="endDate">To:</label>
-        <input type="date" id="endDate" v-model="customEndDate">
-        <button @click="applyCustomDateRange">Apply</button>
-      </div>
-    </div>
-    <div class="add-transaction-button">
-      <button class="btn btn-primary" type="submit" @click="show_add_transaction_modal = !show_add_transaction_modal">
-        <span class="material-symbols-outlined">add</span>
-        Add new transaction
-      </button>
-      <Modal name="m1" v-model:visible="show_add_transaction_modal" :modalClass="'custom-modal'"
-             :title="editMode ? 'Edit Transaction' : 'Add Transaction'" :maskClosable="false" :closable="false"
-             :cancelButton="{text: 'Cancel', onclick: () => { cancelEditTransaction() }, loading: false}"
-             :okButton="{text: editMode ? 'Save Changes' : 'Add Transaction +', onclick: () => { editMode ? save_edited_transaction() : add_transaction() }, loading: false}">
-        <div>
-          <div class="form-group">
-            <div class="display-type-buttons-transaction">
-              <div class="display-type-buttons-container-transaction">
-                <button type="button"
-                        :class="[!transaction_is_income ? 'btn-display-type-selected-transaction' : 'btn-display-type-transaction']"
-                        @click="transaction_is_income = false; transaction_category_id = 0">Expense
-                </button>
-                <button type="button"
-                        :class="[transaction_is_income ? 'btn-display-type-selected-transaction' : 'btn-display-type-transaction']"
-                        @click="transaction_is_income = true; transaction_category_id = 0">Income
-                </button>
-              </div>
-            </div>
-            <br/>
-            <select class="form-select" aria-label="Select transaction" v-model="transaction_category_id">
-              <option :value="0" selected>Select transaction category</option>
-              <option v-if="transaction_is_income" v-for="category in categories.filter(property => property.isIncome)"
-                      :value="category.id">{{ category.name }}
-              </option>
-              <option v-if="!transaction_is_income" v-for="category in categories.filter(property => !property.isIncome)"
-                      :value="category.id">{{ category.name }}
-              </option>
-            </select>
-            <div class="input-group my-3">
-              <input type="text" class="form-control" v-model="transaction_description" placeholder="Input description"/>
-            </div>
-            <div class="input-group my-3">
-              <input type="date" class="form-control" v-model="transaction_date" placeholder="Transaction date"/>
-            </div>
-            <div class="input-group my-3">
-              <input type="number" class="form-control" v-model="transaction_amount" placeholder="Input amount $"/>
-            </div>
-          </div>
+  <div class="header-container">
+    <SortComponent
+        :initialSort="sort"
+        :initialCustomStartDate="customStartDate"
+        :initialCustomEndDate="customEndDate"
+        :transactions="transactions"
+        @sortChange="setSort"
+        @filteredTransactions="updateFilteredTransactions"
+    />
+    <AddTransactionButton @toggleModal="toggleAddTransactionModal" />
+  </div>
+
+  <Modal name="m1" v-model:visible="show_add_transaction_modal" :modalClass="'custom-modal'"
+         :title="editMode ? 'Edit Transaction' : 'Add Transaction'" :maskClosable="false" :closable="false"
+         :cancelButton="{text: 'Cancel', onclick: () => { cancelEditTransaction() }, loading: false}"
+         :okButton="{text: editMode ? 'Save Changes' : 'Add Transaction +', onclick: () => { editMode ? save_edited_transaction() : add_transaction() }, loading: false}">
+    <div>
+      <div class="form-group">
+        <DisplayTypeButtons :isIncomePage="transaction_is_income" @changeDashboardPage="changeTransactionType" />
+        <br/>
+        <select class="form-select" aria-label="Select transaction" v-model="transaction_category_id">
+          <option :value="0" selected>Select transaction category</option>
+          <option v-if="transaction_is_income" v-for="category in categories.filter(property => property.isIncome)"
+                  :value="category.id">{{ category.name }}
+          </option>
+          <option v-if="!transaction_is_income" v-for="category in categories.filter(property => !property.isIncome)"
+                  :value="category.id">{{ category.name }}
+          </option>
+        </select>
+        <div class="input-group my-3">
+          <input type="text" class="form-control" v-model="transaction_description" placeholder="Input description"/>
         </div>
-      </Modal>
-    </div>
-  </div>
-  <div class="transaction-table-container">
-    <div class="row">
-      <div class="col">
-        <table class="table">
-          <thead>
-          <tr class="table-secondary">
-            <th scope="col"></th>
-            <th scope="col">Category</th>
-            <th scope="col">Description</th>
-            <th scope="col">Date</th>
-            <th scope="col">Amount</th>
-            <th scope="col"></th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr v-for="transaction in paginatedTransactions" :key="transaction.id">
-            <td>
-              <span v-if="transaction.isIncome" class="material-symbols-outlined" style="color: green;">
-                keyboard_double_arrow_up
-              </span>
-              <span v-else class="material-symbols-outlined" style="color: red">
-                keyboard_double_arrow_down
-              </span>
-            </td>
-            <td>{{ get_category_name_by_id(transaction.categoryId) }}</td>
-            <td>{{ transaction.description }}</td>
-            <td>{{ formatISODateToDateTime(transaction.date) }}</td>
-            <td>{{ transaction.amount }} $</td>
-            <td>
-              <button @click="edit_transaction(transaction.id)" class="btn-edit">
-                <span class="material-symbols-outlined">edit</span>
-              </button>
-              <button @click="confirm_delete_transaction(transaction.id)" class="btn-delete">
-                <span class="material-symbols-outlined">delete</span>
-              </button>
-            </td>
-          </tr>
-          </tbody>
-        </table>
+        <div class="input-group my-3">
+          <input type="date" class="form-control" v-model="transaction_date" placeholder="Transaction date"/>
+        </div>
+        <div class="input-group my-3">
+          <input type="number" class="form-control" v-model="transaction_amount" placeholder="Input amount $"/>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="pagination">
-    <p class="pagination_text">Page {{ currentPage }} / {{ totalPages }}</p>
-    <button @click="prevPage" :disabled="currentPage === 1" class="pagination-button">&lt;</button>
-    <button @click="nextPage" :disabled="currentPage === totalPages" class="pagination-button">&gt;</button>
-  </div>
+  </Modal>
+
+  <TransactionsTable
+      :transactions="filteredTransactions"
+      :categories="categories"
+      :currentPage="currentPage"
+      :itemsPerPage="itemsPerPage"
+      :get_category_name_by_id="get_category_name_by_id"
+      :formatISODateToDateTime="formatISODateToDateTime"
+      :edit_transaction="edit_transaction"
+      :confirm_delete_transaction="confirm_delete_transaction"
+  />
+
+  <Pagination
+      :currentPage="currentPage"
+      :totalPages="totalPages"
+      :nextPage="nextPage"
+      :prevPage="prevPage"
+  />
 </template>
 
 <script setup>
 import axios from 'axios';
-import {ref, computed, onMounted} from 'vue';
-import {Modal} from 'usemodal-vue3';
-import {format} from 'date-fns';
+import { ref, computed, onMounted } from 'vue';
+import { Modal } from 'usemodal-vue3';
+import { format } from 'date-fns';
+import AddTransactionButton from '@/components/ui/AddTransactionButton.vue';
+import SortComponent from '@/components/SortComponent.vue';
+import TransactionsTable from '@/components/TransactionsTable.vue';
+import Pagination from '@/components/Pagination.vue';
+import DisplayTypeButtons from '@/components/ui/DisplayTypeButtons.vue';
 
 const sort = ref('');
-const customStartDate = ref('');
-const customEndDate = ref('');
 const transaction_category_id = ref(0);
 const transaction_description = ref('');
 const transaction_date = ref(new Date().toISOString().slice(0, 10));
@@ -132,14 +82,21 @@ const categories = ref([]);
 const show_add_transaction_modal = ref(false);
 const editMode = ref(false);
 const selectedTransactionId = ref(null);
+const filteredTransactions = ref([]);
+const customStartDate = ref('');
+const customEndDate = ref('');
 
 onMounted(() => {
   get_categories_data();
   get_transactions_data();
 });
 
-function add_transaction() {
+function toggleAddTransactionModal() {
   show_add_transaction_modal.value = !show_add_transaction_modal.value;
+}
+
+function add_transaction() {
+  toggleAddTransactionModal();
   save_transaction_to_db();
 }
 
@@ -217,68 +174,8 @@ function setSort(value) {
   sort.value = value;
 }
 
-function applyCustomDateRange() {
-  if (customStartDate.value && customEndDate.value) {
-    const startDate = new Date(customStartDate.value);
-    const endDate = new Date(customEndDate.value);
-    filteredTransactions.value = filterTransactionsByDateRange(transactions.value, startDate, endDate);
-  }
-}
-
-const filteredTransactions = computed(() => {
-  switch (sort.value) {
-    case 'Week':
-      return filterTransactionsByWeek(transactions.value);
-    case 'Month':
-      return filterTransactionsByMonth(transactions.value);
-    case 'Year':
-      return filterTransactionsByYear(transactions.value);
-    case 'Custom':
-      return customFilteredTransactions.value;
-    default:
-      return transactions.value;
-  }
-});
-
-const customFilteredTransactions = ref([]);
-
-function filterTransactionsByWeek(transactions) {
-  const now = new Date();
-  const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-  return transactions.filter(transaction => {
-    const transactionDate = new Date(transaction.date);
-    return transactionDate >= oneWeekAgo && transactionDate <= now;
-  });
-}
-
-function filterTransactionsByMonth(transactions) {
-  const now = new Date();
-  const oneMonthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
-  return transactions.filter(transaction => {
-    const transactionDate = new Date(transaction.date);
-    return transactionDate >= oneMonthAgo && transactionDate <= now;
-  });
-}
-
-function filterTransactionsByYear(transactions) {
-  const now = new Date();
-  const oneYearAgo = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
-  return transactions.filter(transaction => {
-    const transactionDate = new Date(transaction.date);
-    return transactionDate >= oneYearAgo && transactionDate <= now;
-  });
-}
-
-function filterTransactionsByDateRange(transactions, startDate, endDate) {
-  return transactions.filter(transaction => {
-    const transactionDate = new Date(transaction.date);
-    return transactionDate >= startDate && transactionDate <= endDate;
-  });
-}
-
-function formatISODateToDateTime(isoDateString) {
-  const dateTime = new Date(isoDateString);
-  return format(dateTime, 'dd-MM-yyyy HH:mm');
+function updateFilteredTransactions(transactions) {
+  filteredTransactions.value = transactions;
 }
 
 const itemsPerPage = ref(20);
@@ -298,12 +195,6 @@ const prevPage = () => {
 
 const totalPages = computed(() => {
   return Math.ceil(filteredTransactions.value.length / itemsPerPage.value);
-});
-
-const paginatedTransactions = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage.value;
-  const end = start + itemsPerPage.value;
-  return filteredTransactions.value.slice(start, end);
 });
 
 function edit_transaction(id) {
@@ -345,31 +236,24 @@ function save_edited_transaction() {
     handle_error(error);
   });
 }
+
+function formatISODateToDateTime(isoDateString) {
+  const dateTime = new Date(isoDateString);
+  return format(dateTime, 'dd-MM-yyyy HH:mm');
+}
+
+function changeTransactionType(new_value) {
+  transaction_is_income.value = new_value;
+  transaction_category_id.value = 0;
+}
 </script>
 
 <style scoped>
-.title {
-  text-align: left;
-  margin-left: 30px;
-  margin-top: 30px;
-  color: rgba(0, 0, 0, 0.5);
-}
-
-.button-container {
+.header-container {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  margin-top: 1.5vw;
-}
-
-.add-transaction-button {
-  margin-left: auto;
-  margin-right: 40px;
-}
-
-.add-transaction-button .btn {
-  display: flex;
-  align-items: center;
-  font-size: 16px;
+  margin: 20px;
 }
 
 .display-type-buttons-transaction {
@@ -407,58 +291,6 @@ function save_edited_transaction() {
   height: 40px;
   font-weight: normal;
   font-size: 15px;
-}
-
-.transaction-table-container {
-  margin-left: 30px;
-  margin-top: 20px;
-}
-
-.filter-container {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.custom-date-range {
-  display: flex;
-  align-items: center;
-  margin-left: 10px;
-}
-
-.custom-date-range label {
-  margin: 0 5px;
-}
-
-.custom-date-range button {
-  margin-left: 5px;
-}
-
-.btn-edit, .btn-delete {
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-.pagination {
-  display: flex;
-  float: right;
-  justify-content: center;
-  margin-bottom: 1vw;
-  margin-right: 3vw;
-}
-
-.pagination_text {
-  margin-right: 10px;
-  margin-top: 15px;
-  font-size: 16px;
-  color: rgba(0, 0, 0, 0.5);
-}
-
-.pagination-button {
-  background: none;
-  border: none;
-  font-size: 24px;
 }
 
 .custom-modal {
