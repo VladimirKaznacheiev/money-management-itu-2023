@@ -15,12 +15,12 @@
                 <div :style="getColorStyle(color)" class="color-circle"></div>
               </td>
               <td>
-                  <span class="material-symbols-outlined icon-label">
-                    {{ pieData.categoryIcons[startIndex + index] }}
-                  </span>
+                <span class="material-symbols-outlined icon-label">
+                  {{ pieData.categoryIcons[startIndex + index] }}
+                </span>
               </td>
               <td>
-                <p class="char-data-element-label">{{ pieData.labels[startIndex + index] }}</p>
+                <p class="char-data-element-label truncate">{{ pieData.labels[startIndex + index] }}</p>
               </td>
               <td>
                 <p class="char-data-element-data">{{ pieData.datasets[0].data[startIndex + index] }} $</p>
@@ -47,9 +47,9 @@
 </template>
 
 <script setup>
-import {defineProps, ref, computed} from 'vue';
-import {Doughnut} from 'vue-chartjs';
-import {Chart as ChartJS, ArcElement, Tooltip, Legend} from 'chart.js';
+import { defineProps, ref, computed } from 'vue';
+import { Doughnut } from 'vue-chartjs';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -126,6 +126,10 @@ function getColorStyle(color) {
   font-weight: 500;
   margin-left: 1.25vw;
   text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px; /* Adjust the max-width as needed */
 }
 
 .char-data-element-data {
