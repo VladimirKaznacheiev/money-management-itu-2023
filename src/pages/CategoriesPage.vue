@@ -1,96 +1,68 @@
-<!--
-    Name: components/CategoriesPage.vue
-    Authors: Volodymyr Burylov
-             Volodymyr Kaznacheiev
-             Maksim Kalutski
-    Date: 05/12/2023
--->
-
 <template>
   <div class="container">
-    <div>
-      <h1 class="title">Categories</h1>
-    </div>
-    <div class="display-type-buttons">
-      <div class="display-type-buttons-container">
-        <button type="button" class="btn-display-type"
-                :class="[category_is_income_filt ? '' : 'btn-display-type-selected']"
-                @click="showExp(); selectedCat = null">Expenses
-        </button>
-        <button type="button" class="btn-display-type"
-                :class="[!category_is_income_filt ? '' : 'btn-display-type-selected']"
-                @click="showInc(); selectedCat = null">Incomes
-        </button>
-      </div>
-    </div>
     <div class="actions">
-      <button class="btn btn-primary add-btn"
-              @click="show_add_category_modal = !show_add_category_modal; selectedCat = null;">
-        <span class="material-symbols-outlined">add</span>
-        Add new category
-      </button>
-      <Modal name="m1" v-model:visible="show_add_category_modal" :maskClosable="false" :closable="false"
-             :title="editCategoryId ? 'Edit category' : 'Add new category'"
-             :cancelButton="{text: 'Cancel', onclick: () => {show_add_category_modal = !show_add_category_modal; selectedIcon = icons[0]; category_is_income = false; category_name = '';}, loading: false}"
-             :okButton="{text: editCategoryId ? 'Save' : 'Add', onclick: () => {add_category(); selectedIcon = icons[0]; category_is_income = false;}, loading: false}">
-        <div>
-          <div class="display-type-buttons-transaction">
-            <div class="display-type-buttons-container-transaction">
-              <button type="button"
-                      class="btn-display-type-transaction"
-                      :class="[!category_is_income ? 'btn-display-type-selected-transaction' : '']"
-                      @click="category_is_income = false">Expense
-              </button>
-              <button type="button"
-                      class="btn-display-type-transaction"
-                      :class="[category_is_income ? 'btn-display-type-selected-transaction' : '']"
-                      @click="category_is_income = true">Income
-              </button>
-            </div>
-          </div>
-          <div class="form-group">
-            <div class="input-group my-3">
-              <input type="text" class="form-control" v-model="category_name" placeholder="Input category name"/>
-            </div>
-          </div>
-          <div class="icon-selector">
-            <span v-for="(icon, index) in icons" :key="index" class="icon-circle"
-                  :class="{ 'selected': selectedIcon === icon }" @click="selectIcon(icon)">
-              <span class="material-symbols-outlined">
-                {{ icon }}
-              </span>
-            </span>
-          </div>
+      <DeleteButton @toggleModal="deleteCategory" />
+      <div class="display-type-buttons">
+        <div class="tabs">
+          <input type="radio" id="radio-expenses" name="tabs" :checked="!category_is_income_filt" @change="showExp">
+          <label class="tab" for="radio-expenses">Expenses</label>
+          <input type="radio" id="radio-incomes" name="tabs" :checked="category_is_income_filt" @change="showInc">
+          <label class="tab" for="radio-incomes">Incomes</label>
+          <span class="glider"></span>
         </div>
-      </Modal>
-      <button type="button" class="btn btn-danger delete-btn" @click="deleteCategory">
-        <span class="material-symbols-outlined">delete</span>Delete category
-      </button>
-    </div>
-    <div class="existing-categories">
-      <div v-for="(category, index) in paginatedCategories" :key="index" class="existing-category">
-        <div class="icon-circleBIG" :class="{ 'selected': selectedCat === category.name }"
-             @click="selectCat(category.name)">
-          <span class="material-symbols-outlined">{{ category.iconName }}</span>
-        </div>
-        <div class="category-name">{{ category.name }}</div>
-        <button @click="editCategory(category.id)" class="edit-btn">
-          <span class="material-symbols-outlined">edit</span>
-        </button>
       </div>
+      <AddButton @toggleModal="show_add_category_modal = !show_add_category_modal; selectedCat = null" />
     </div>
-    <div class="pagination">
-      <p class="pagination_text">Page {{ currentPage }} / {{ totalPages }}</p>
-      <button @click="prevPage" :disabled="currentPage === 1" class="page-btn">&lt;</button>
-      <button @click="nextPage" :disabled="currentPage === totalPages" class="page-btn">&gt;</button>
-    </div>
+    <Modal name="m1" v-model:visible="show_add_category_modal" :maskClosable="false" :closable="false"
+           :title="editCategoryId ? 'Edit category' : 'Add new category'"
+           :cancelButton="{text: 'Cancel', onclick: () => {resetForm()}, loading: false}"
+           :okButton="{text: editCategoryId ? 'Save' : 'Add', onclick: () => {add_category()}, loading: false}">
+      <div>
+        <div class="modal-tabs">
+          <div class="tabs">
+            <input type="radio" id="modal-radio-expenses" name="modal-tabs" :checked="!category_is_income" @change="handleModalCategoryTypeChange(false)">
+            <label class="tab" for="modal-radio-expenses">Expenses</label>
+            <input type="radio" id="modal-radio-incomes" name="modal-tabs" :checked="category_is_income" @change="handleModalCategoryTypeChange(true)">
+            <label class="tab" for="modal-radio-incomes">Incomes</label>
+            <span class="glider"></span>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="input-group my-3">
+            <input type="text" class="form-control" v-model="category_name" placeholder="Input category name"/>
+          </div>
+        </div>
+        <div class="icon-selector">
+        <span v-for="(icon, index) in icons" :key="index" class="icon-circle"
+              :class="{ 'selected': selectedIcon === icon }" @click="selectIcon(icon)">
+          <span class="material-symbols-outlined">
+            {{ icon }}
+          </span>
+        </span>
+        </div>
+      </div>
+    </Modal>
+    <ExistingCategories
+        :categories="categories"
+        :selectedCat="selectedCat"
+        :itemsPerPage="itemsPerPage"
+        :currentPage="currentPage"
+        :category_is_income_filt="category_is_income_filt"
+        @selectCat="selectCat"
+        @editCategory="editCategory"
+    />
   </div>
+  <Pagination :currentPage="currentPage" :totalPages="totalPages" :nextPage="nextPage" :prevPage="prevPage" />
 </template>
 
 <script setup>
 import axios from 'axios';
-import {Modal} from 'usemodal-vue3';
-import {ref, computed} from 'vue';
+import { Modal } from 'usemodal-vue3';
+import { ref, computed } from 'vue';
+import AddButton from '@/components/ui/AddButton.vue';
+import DeleteButton from '@/components/ui/DeleteButton.vue';
+import Pagination from '@/components/Pagination.vue'; // Import the Pagination component
+import ExistingCategories from '@/components/ExistingCategories.vue'; // Import the new component
 
 const category_name = ref('');
 const categories = ref([]);
@@ -113,10 +85,7 @@ function add_category() {
   }
 
   editCategoryId.value = null;
-  category_name.value = '';
-  selectedIcon.value = icons[0];
-  category_is_income.value = false;
-  show_add_category_modal.value = false;
+  resetForm();
 }
 
 function save_category_to_db() {
@@ -186,6 +155,10 @@ function showInc() {
   currentPage.value = 1;
 }
 
+function handleModalCategoryTypeChange(new_value) {
+  category_is_income.value = new_value;
+}
+
 const filteredCategories = computed(() => {
   return categories.value.filter(category => {
     return category.isIncome === category_is_income_filt.value;
@@ -253,65 +226,106 @@ function update_category(id) {
   });
 }
 
+function resetForm() {
+  show_add_category_modal.value = !show_add_category_modal;
+  selectedIcon.value = icons[0];
+  category_is_income.value = false;
+  category_name.value = '';
+}
+
 get_categories_data();
 </script>
 
 <style scoped>
-.title {
-  text-align: left;
-  margin-left: 30px;
-  margin-top: 30px;
-  color: rgba(0, 0, 0, 0.5);
-}
-
-.display-type-buttons {
+.container {
   display: flex;
-  justify-content: center;
-  margin-top: 20px;
-}
-
-.display-type-buttons-container {
-  display: flex;
-  gap: 10px;
-}
-
-.btn-display-type {
-  font-size: 18px;
-  padding: 10px 20px;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.5s ease;
-}
-
-.btn-display-type-selected {
-  background-color: #C6E7FF;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  min-width: 700px;
 }
 
 .actions {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 20px;
+  width: 100%;
+  margin-bottom: 20px;
 }
 
-.add-btn {
+.display-type-buttons {
   display: flex;
-  align-items: center;
-  margin-left: 20px;
-  font-size: 16px;
+  justify-content: center;
+  flex-grow: 1;
 }
 
-.delete-btn {
+.modal-tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.tabs {
+  display: flex;
+  position: relative;
+  background-color: #fff;
+  padding: 0.4rem;
+  border-radius: 99px;
+}
+
+.tabs * {
+  z-index: 2;
+}
+
+.tabs input[type="radio"] {
+  display: none;
+}
+
+.tab {
   display: flex;
   align-items: center;
-  margin-right: 20px;
-  font-size: 16px;
+  justify-content: center;
+  height: 40px;
+  width: 200px;
+  font-size: 1rem;
+  color: black;
+  font-weight: 500;
+  border-radius: 99px;
+  cursor: pointer;
+  transition: color 0.15s ease-in;
+}
+
+.tabs input[type="radio"]:checked + label {
+  color: #185ee0;
+}
+
+.tabs input[id="radio-expenses"]:checked ~ .glider,
+.tabs input[id="modal-radio-expenses"]:checked ~ .glider {
+  transform: translateX(0);
+}
+
+.tabs input[id="radio-incomes"]:checked ~ .glider,
+.tabs input[id="modal-radio-incomes"]:checked ~ .glider {
+  transform: translateX(200px);
+}
+
+.glider {
+  position: absolute;
+  display: flex;
+  height: 40px;
+  width: 200px;
+  background-color: #e6eef9;
+  z-index: 1;
+  border-radius: 99px;
+  transition: 0.25s ease-out;
 }
 
 .icon-selector {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+  justify-content: center;
+  margin-top: 20px;
 }
 
 .icon-circle {
@@ -330,79 +344,5 @@ get_categories_data();
 .icon-circle.selected {
   background-color: #007bff;
   color: #fff;
-}
-
-.icon-circleBIG {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  cursor: pointer;
-  background-color: #fff;
-  border: 2px solid #007bff;
-  transition: background-color 0.5s ease;
-}
-
-.icon-circleBIG.selected {
-  background-color: #007bff;
-  color: #fff;
-}
-
-.icon-circleBIG span {
-  font-size: 40px;
-}
-
-.existing-categories {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-.existing-category {
-  width: 18%;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.category-name {
-  text-align: center;
-  font-size: 16px;
-  color: rgba(0, 0, 0, 0.7);
-  margin-top: 5px;
-}
-
-.edit-btn {
-  background: none;
-  border: none;
-  font-size: 18px;
-  color: #71787E;
-}
-
-.pagination {
-  display: flex;
-  float: right;
-  justify-content: center;
-  margin-bottom: 1vw;
-  margin-right: 3vw;
-}
-
-.pagination_text {
-  margin-right: 10px;
-  margin-top: 15px;
-  font-size: 16px;
-  color: rgba(0, 0, 0, 0.5);
-}
-
-.page-btn {
-  background: none;
-  border: none;
-  font-size: 24px;
 }
 </style>

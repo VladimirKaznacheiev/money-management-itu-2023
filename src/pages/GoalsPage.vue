@@ -499,8 +499,12 @@ function deleteGoal() {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  transition: box-shadow 0.3s ease;
 }
 
+.goal-card:hover {
+  box-shadow: 0px 8px 16px 0px rgb(0 0 0 / 10%);
+}
 
 .goal-cards-container {
   display: flex;
