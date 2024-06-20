@@ -105,7 +105,5 @@ function changeDashboardPage(new_value) {
   .container input[id="radio-incomes"]:checked ~ .glider {
     transform: translateX(150px);
   }
-
 }
-
 </style>
