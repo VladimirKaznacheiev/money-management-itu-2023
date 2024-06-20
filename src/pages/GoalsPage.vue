@@ -487,7 +487,8 @@ function deleteGoal() {
 }
 
 .goal-card {
-  background: #e8e8e8;
+  border: 2px solid #b5bfd9;
+  background-color: #fff;
   height: auto;
   width: 18vw;
   min-width: 250px;
@@ -499,7 +500,7 @@ function deleteGoal() {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  transition: box-shadow 0.3s ease;
+  transition: box-shadow 0.15s ease;
 }
 
 .goal-card:hover {

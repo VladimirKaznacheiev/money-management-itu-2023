@@ -8,6 +8,9 @@
             <span class="material-symbols-outlined">{{ category.iconName }}</span>
           </span>
           <span class="checkbox-label">{{ category.name }}</span>
+          <span class="edit-icon" @click.stop="editCategory(category.id)">
+            <span class="material-symbols-outlined">edit</span>
+          </span>
         </span>
       </label>
     </div>
@@ -17,7 +20,6 @@
 <script setup>
 import { ref, computed } from 'vue';
 
-// Props to receive from the parent component
 const props = defineProps({
   categories: Array,
   selectedCat: String,
@@ -42,6 +44,10 @@ const paginatedCategories = computed(() => {
 
 function selectCat(name) {
   emit('selectCat', name);
+}
+
+function editCategory(id) {
+  emit('editCategory', id);
 }
 </script>
 
@@ -96,15 +102,19 @@ function selectCat(name) {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 7rem;
-  min-height: 7rem;
-  border-radius: 0.5rem;
+  width: 10rem;
+  height: 7rem;
+  border-radius: 1.5rem;
   border: 2px solid #b5bfd9;
   background-color: #fff;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 8px 16px 0px rgb(0 0 0 / 3%);
   transition: 0.15s ease;
   cursor: pointer;
   position: relative;
+}
+
+.checkbox-wrapper-16 .checkbox-tile:hover {
+  box-shadow: 0px 8px 16px 0px rgb(0 0 0 / 10%);
 }
 
 .checkbox-wrapper-16 .checkbox-tile:before {
@@ -116,15 +126,11 @@ function selectCat(name) {
   border: 2px solid #b5bfd9;
   background-color: #fff;
   border-radius: 50%;
-  top: 0.25rem;
-  left: 0.25rem;
+  top: 0.5rem;
+  left: 0.5rem;
   opacity: 0;
   transform: scale(0);
   transition: 0.25s ease;
-}
-
-.checkbox-wrapper-16 .checkbox-tile:hover {
-  border-color: #2260ff;
 }
 
 .checkbox-wrapper-16 .checkbox-tile:hover:before {
@@ -150,6 +156,23 @@ function selectCat(name) {
   white-space: nowrap;
   max-width: 100%;
   padding: 0 0.5rem;
+}
+
+.checkbox-wrapper-16 .edit-icon {
+  position: absolute;
+  right: 0.6rem;
+  top: 0.6rem;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.checkbox-wrapper-16 .edit-icon:hover {
+  color: #2260ff;
+}
+
+.checkbox-wrapper-16 .checkbox-tile:hover .edit-icon {
+  opacity: 1;
 }
 
 .existing-categories {

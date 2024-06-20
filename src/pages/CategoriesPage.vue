@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="actions">
-      <DeleteButton @toggleModal="deleteCategory" />
+      <DeleteButton :style="{ visibility: selectedCat ? 'visible' : 'hidden' }" @toggleModal="deleteCategory" />
       <div class="display-type-buttons">
         <div class="tabs">
           <input type="radio" id="radio-expenses" name="tabs" :checked="!category_is_income_filt" @change="showExp">
@@ -54,6 +54,7 @@
   </div>
   <Pagination :currentPage="currentPage" :totalPages="totalPages" :nextPage="nextPage" :prevPage="prevPage" />
 </template>
+
 
 <script setup>
 import axios from 'axios';
@@ -126,7 +127,7 @@ function selectCat(name) {
   }
 }
 
-const itemsPerPage = ref(15);
+const itemsPerPage = ref(28);
 const currentPage = ref(1);
 
 const nextPage = () => {
